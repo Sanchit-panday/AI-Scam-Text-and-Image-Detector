@@ -24,7 +24,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<PythonPredictionService>();
 
-environment requirements
+// environment requirements
 var allowedOrigins =
     Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
     ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
