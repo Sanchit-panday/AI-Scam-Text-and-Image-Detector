@@ -7,6 +7,12 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<PythonPredictionService>();
 
+// environment requirements
+var allowedOrigins =
+    Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
+    ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+    ?? [];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -14,9 +20,9 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
+                .WithOrigins(allowedOrigins)
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowAnyOrigin();
+                .AllowAnyMethod();
         });
 });
 

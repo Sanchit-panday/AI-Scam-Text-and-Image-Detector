@@ -5,7 +5,7 @@ import ResultCard from "@/components/ResultCard";
 import { useScanStore } from "@/context/ScanContext";
 import { AlertCircle, FileText, Loader, Send, X } from "lucide-react";
 import { useRef, useState } from "react";
-import type {ScanMeta} from "@/types/types"
+import type { ScanMeta } from "@/types/types"
 
 export default function TextAnalysisPage() {
     const MAX_MESSAGE_LENGTH = 5000;
@@ -38,8 +38,12 @@ export default function TextAnalysisPage() {
             setResult(null);
             setError(null);
 
+            // environment Variables
+            const BASE_URL =
+                process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
+
             const response = await fetch(
-                "http://localhost:5298/api/phishing/check",
+                `${BASE_URL}/api/phishing/check`,
                 {
                     method: "POST",
                     headers: {

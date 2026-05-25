@@ -6,7 +6,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ResultCard from "@/components/ResultCard";
 import { Image, Upload, X, Scan, AlertCircle, FileText } from 'lucide-react'
 import { useScanStore } from '@/context/ScanContext';
-import type {ScanMeta} from "@/types/types"
+import type { ScanMeta } from "@/types/types"
 
 
 export default function ImageAnalysisPage() {
@@ -74,6 +74,9 @@ export default function ImageAnalysisPage() {
     setResult(null)
     setError(null)
     setScanMeta(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   }
 
   const analyzeImage = async () => {
@@ -92,8 +95,11 @@ export default function ImageAnalysisPage() {
       // important
       formData.append("file", image);
 
+      const BASE_URL =
+        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
+
       const response = await fetch(
-        "http://localhost:5298/api/phishing/analyze-image",
+        `${BASE_URL}/api/phishing/analyze-image`,
         {
           method: "POST",
           body: formData,

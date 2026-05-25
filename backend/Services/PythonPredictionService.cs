@@ -24,7 +24,6 @@ public class PythonPredictionService
         process.StartInfo = new ProcessStartInfo
         {
             FileName = pythonExe,
-            // Arguments = $"Phishing-Model/predict.py \"{message}\"",
             Arguments = $"\"{scriptPath}\" \"{message}\"",
 
             RedirectStandardOutput = true,
@@ -70,7 +69,6 @@ public class PythonPredictionService
         process.StartInfo = new ProcessStartInfo
         {
             FileName = pythonExe,
-            // Arguments = $"Phishing-Model/predict-image.py \"{imagePath}\"",
 
             Arguments = $"\"{scriptPath}\" \"{imagePath}\"",
 
