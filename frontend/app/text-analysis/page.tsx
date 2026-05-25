@@ -56,12 +56,20 @@ export default function TextAnalysisPage() {
             );
 
             if (!response.ok) {
+
+                if (response.status === 429) {
+                    throw new Error(
+                        "Too many requests. Please wait a minute and try again."
+                    );
+                }
+                
                 const errorData = await response.json();
 
                 throw new Error(
                     errorData.error || "Server error"
                 );
             }
+
 
             const data = await response.json();
             const meta: ScanMeta = { type: 'image', input: message, timestamp: new Date().toISOString() }

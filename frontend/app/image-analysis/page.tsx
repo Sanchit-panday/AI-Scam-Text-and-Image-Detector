@@ -107,6 +107,13 @@ export default function ImageAnalysisPage() {
       );
 
       if (!response.ok) {
+        
+        if (response.status === 429) {
+          throw new Error(
+            "Too many requests. Please wait a minute and try again."
+          );
+        }
+
         const errorData = await response.json();
 
         throw new Error(

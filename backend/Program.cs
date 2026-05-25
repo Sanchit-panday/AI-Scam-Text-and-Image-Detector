@@ -18,6 +18,18 @@ builder.Services.AddRateLimiter(options =>
                 }));
 
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.ContentType = "application/json";
+
+        await context.HttpContext.Response.WriteAsync(
+            """
+            {
+                "error": "Too many requests. Please try again later."
+            }
+            """,
+            token);
+    };
 });
 
 builder.Services.AddControllers();

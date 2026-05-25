@@ -122,6 +122,5 @@ public class PythonPredictionService
         }
 
         return result;
-        // return output.Trim();
     }
 }
