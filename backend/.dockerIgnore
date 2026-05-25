@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+__pycache__/
+*.pyc
+.git
+.gitignore
+
+node_modules/
+.next/
+
+temp/
+uploads/

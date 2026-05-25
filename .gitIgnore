@@ -1,0 +1,74 @@
+# ==================================
+# Frontend (Next.js)
+# ==================================
+# dependecies
+frontend/node_modules/
+
+# next.js
+frontend/.next/
+frontend/out/
+
+# production
+frontend/build
+frontend/.vercel/
+
+#vercel
+frontend/.vercel
+
+#typescript
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Environment files
+frontend/.env*
+backend/.env*
+
+# ==================================
+# ASP.NET Core
+# ==================================
+backend/**/bin/
+backend/**/obj/
+backend/.vs/
+
+# Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ==================================
+# Python
+# ==================================
+backend/**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ==================================
+# Logs
+# ==================================
+*.log
+
+# ==================================
+# IDEs
+# ==================================
+.vscode/
+.idea/
+
+# ==================================
+# OS Files
+# ==================================
+.DS_Store
+Thumbs.db
+
+# ==================================
+# Temporary uploads
+# ==================================
+backend/uploads/
+backend/temp/
