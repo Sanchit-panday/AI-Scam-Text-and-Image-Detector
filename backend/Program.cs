@@ -1,7 +1,14 @@
 using PhishingDetector.API.Services;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Http.Features;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 5 * 1024 * 1024; // 5 MB
+});
 
 builder.Services.AddRateLimiter(options =>
 {

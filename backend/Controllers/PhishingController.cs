@@ -73,6 +73,16 @@ public class PhishingController : ControllerBase
                     error = "Only image files are allowed."
                 });
         }
+
+        const long MaxFileSize = 5 * 1024 * 1024; // 5 MB
+        if (file.Length > MaxFileSize)
+        {
+            return BadRequest(new
+            {
+                error = "Image size cannot exceed 5 MB."
+            });
+        }
+
         string tempPath = "";
         try
         {
