@@ -40,4 +40,12 @@ app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
+// Health endpoint
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "Healthy",
+    service = "AI Scam Detector API",
+    timestamp = DateTime.UtcNow
+}));
+
 app.Run();
