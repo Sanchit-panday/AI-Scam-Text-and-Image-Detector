@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using PhishingDetector.API.Models;
 using PhishingDetector.API.Services;
-// using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace PhishingDetector.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-// [EnableRateLimiting("ApiPolicy")]
 public class PhishingController : ControllerBase
 {
     private readonly PythonPredictionService _pythonService;

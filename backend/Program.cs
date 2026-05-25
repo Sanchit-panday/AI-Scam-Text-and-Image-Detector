@@ -1,18 +1,34 @@
 using PhishingDetector.API.Services;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
+        context =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                factory: _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 20,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    QueueLimit = 2
+                }));
+
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
 
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<PythonPredictionService>();
 
-// environment requirements
+environment requirements
 var allowedOrigins =
     Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
     ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
     ?? [];
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -33,6 +49,8 @@ if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
 }
 
 var app = builder.Build();
+
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 
