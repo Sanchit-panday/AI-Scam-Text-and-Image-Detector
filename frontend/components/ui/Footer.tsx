@@ -1,6 +1,6 @@
 "use client"
 import { caveat, playfairDisplaySC } from '../Fonts'
-import { BrickWallFire, GitPullRequestArrow, Globe } from 'lucide-react'
+import { BrickWallFire, GitPullRequestArrow, Globe, MessagesSquare } from 'lucide-react'
 import { useCookieContext } from '@/context/CookieContext';
 
 function Footer() {
@@ -13,9 +13,31 @@ function Footer() {
                     Scan. Verify. Click.
                 </span>
 
-                <div className='flex mt-5 space-x-10 md:justify-between'>
+                <div className='md:flex mt-5 space-y-10 md:justify-between'>
+                    {/* quick links */}
+                    <div className='grid grid-cols-2 space-x-10 md:order-2'>
+                        {/* Tools */}
+                        <div className='space-y-3 '>
+                            <p className='font-semibold'>Tools</p>
+                            <ul className='space-y-2 quickLink'>
+                                <li><a href="/text-analysis">Text analyzer</a></li>
+                                <li><a href="/image-analysis">Image analyzer</a></li>
+                            </ul>
+                        </div>
+                        {/* Resources */}
+                        <div className='space-y-3'>
+                            <p className='font-semibold'>Resources</p>
+                            <ul className='space-y-2 quickLink'>
+                                <li><a href="/">Blogs</a></li>
+                                <li><a href="/about" target="_blank">About us</a></li>
+                                <li><a href="/">Terms of service</a></li>
+                                <li><a href="/">Privacy policy</a></li>
+                                <li><button onClick={() => setShowSettings(true)} className='hover:underline'> Manage Cookies</button></li>
+                            </ul>
+                        </div>
+                    </div>
                     {/* branding */}
-                    <div className='max-w-sm space-y-2'>
+                    <div className='max-w-sm space-y-2 md:order-1'>
                         <div className='flex'>
                             <BrickWallFire className='mr-4' size={30} />
                             <span className={`text-2xl font-bold ${playfairDisplaySC.className}`}>Mildy Ai</span>
@@ -26,38 +48,17 @@ function Footer() {
                             Build by Sanchit  · India 🇮🇳
                         </p>
                     </div>
-
-                    {/* quick links */}
-                    <div className='grid grid-cols-2 space-x-10'>
-                        {/* Tools */}
-                        <div className='space-y-3'>
-                            <p className='font-semibold'>Tools</p>
-                            <ul className='space-y-2 quickLink'>
-                                <li><a href="/text-analysis">Text analyzer</a></li>
-                                <li><a href="/image-analysis">Image analyzer</a></li>
-                            </ul>
-                        </div>
-
-                        {/* Resources */}
-                        <div className='space-y-3'>
-                            <p className='font-semibold'>Resources</p>
-                            <ul className='space-y-2 quickLink'>
-                                <li><a href="/">Blogs</a></li>
-                                <li><a href="/about">About us</a></li>
-                                <li><a href="/">Terms of service</a></li>
-                                <li><a href="/">Privacy policy</a></li>
-                                <li><button onClick={() => setShowSettings(true)} className='hover:underline'> Manage Cookies</button></li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
                 <div className="space-y-4">
                     <div className='flex items-center gap-2 text-gray-300'>
-                        <a href="https://github.com/Sanchit-panday/AI-Scam-Text-and-Image-Detector">
+                        <a href="https://github.com/Sanchit-panday/AI-Scam-Text-and-Image-Detector" target="_blank">
                             <GitPullRequestArrow size={20} />
                         </a>
-                        <a href="https://ai-scam-text-and-image-detector.vercel.app/">
+                        <a href="https://ai-scam-text-and-image-detector.vercel.app/" target="_blank">
                             <Globe size={20} />
+                        </a>
+                        <a href="https://discord.gg/nxpMtBrdb7" target="_blank">
+                            <MessagesSquare size={20} />
                         </a>
                     </div>
                     <div className='border-t border-slate-800 w-full'></div>

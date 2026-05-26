@@ -21,7 +21,7 @@ import Footer from '@/components/ui/Footer';
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 
 export default function layout({
@@ -43,7 +43,9 @@ export default function layout({
                         <main className='flex-1 px-4 md:px-6 py-6 max-w-6xl w-full mx-auto'>
                             <CookieProvider>
                                 <ScanProvider>
-                                    {children}
+                                    <div className='px-2'>
+                                        {children}
+                                    </div>
                                 </ScanProvider>
                                 <CookieBanner />
                                 <CookieSettingsModal />

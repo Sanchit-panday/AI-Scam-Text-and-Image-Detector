@@ -21,14 +21,14 @@ import { useState } from "react";
 
 function StatCard({ label, value, icon: Icon, color, sub }: StatCardProps) {
   return (
-    <div className="glass-card p-5 flex items-center gap-4">
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
-        <Icon size={22} className="text-white" aria-hidden />
-      </div>
-      <div>
-        <p className="text-2xl font-bold text-white tabular-nums">{value}</p>
-        <p className="text-sm text-slate-400">{label}</p>
+    <div className="glass-card p-5 flex flex-col min-[450px]:flex-row items-center gap-y-2 gap-x-4 ">
+      <div className="min-[450px]:order-2">
+        <p className="text-lg md:text-2xl font-bold text-white text-center min-[450px]:text-left tabular-nums min-[450px]:order-1">{value}</p>
+        <p className="text-xs md:text-sm text-slate-400 min-[450px]:oder-2">{label}</p>
         {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
+      </div>
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 min-[450px]:order-1 ${color}`}>
+        <Icon size={22} className="text-white max-[450px]:text-[2px]" aria-hidden />
       </div>
     </div>
   )
@@ -177,9 +177,9 @@ export default function Home() {
             How Mildy Works
           </div>
 
-          <div className=" space-y-15 w-full justify-items-center">
-            <div className="grid md:grid-cols-2 gap-5 items-center">
-              <div className="w-64 frounded-xl flex flex-col justify-center p-4">
+          <div className="space-y-15 w-full ">
+            <div className="grid md:grid-cols-2 gap-5 items-center justify-center">
+              <div className="max-w-64 frounded-xl flex flex-col justify-center p-4">
                 <div className="flex items-center w-full mb-2">
                   <ShieldAlert className="mr-2" size={40} />
                   <p className={`font-semibold ${saira.className}`}>
@@ -194,15 +194,15 @@ export default function Home() {
                 loop
                 muted
                 playsInline
-                className="max-w-sm rounded-xl border"
+                className="w-sm rounded-xl border"
               >
                 <source src="/Assets/Demo/Demo1.webm" type="video/webm" />
                 Your browser does not support the video tag.
               </video>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-5 items-center ">
-              <div className="w-64 rounded-xl flex flex-col justify-center p-4 order-1 md:order-2">
+            <div className="grid md:grid-cols-2 gap-5 items-center justify-center ">
+              <div className="max-w-64 rounded-xl flex flex-col justify-center p-4 order-1 md:order-2">
                 <div className="flex items-center w-full mb-4">
                   <BrickWallShield className="mr-2" size={40} />
                   <p className={`font-semibold ${saira.className}`}>
@@ -217,15 +217,15 @@ export default function Home() {
                 loop
                 muted
                 playsInline
-                className="max-w-sm rounded-xl border order-2 md:order-1"
+                className="w-sm rounded-xl border order-2 md:order-1"
               >
                 <source src="/Assets/Demo/Demo2.webm" type="video/webm" />
                 Your browser does not support the video tag.
               </video>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-5 items-center ">
-              <div className="w-64 rounded-xl flex flex-col justify-center p-4">
+            <div className="grid md:grid-cols-2 gap-5 items-center justify-center">
+              <div className="max-w-64 rounded-xl flex flex-col justify-center p-4">
                 <div className="flex items-center w-full mb-4">
                   <Rabbit className="mr-2" size={40} />
                   <p className={`font-semibold ${saira.className}`}>
@@ -240,7 +240,7 @@ export default function Home() {
                 loop
                 muted
                 playsInline
-                className="max-w-sm rounded-xl border md:mb-0"
+                className="w-sm rounded-xl border md:mb-0"
               >
                 <source src="/Assets/Demo/Demo3.webm" type="video/webm" />
                 Your browser does not support the video tag.
