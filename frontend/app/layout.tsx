@@ -1,3 +1,4 @@
+// "use client"
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
     title: 'AI Scam Detector',
@@ -6,9 +7,21 @@ export const metadata: Metadata = {
 import './globals.css'
 // import ThemeToggle from "@/components/ui/ThemeToggle";
 import { ThemeProvider } from '@/components/ThemeProvider';
+import {
+    CookieProvider,
+    useCookieContext
+} from "@/context/CookieContext";
+import CookieBanner from "@/components/cookies/CookieBanner";
+import CookieSettingsModal from "@/components/cookies/CookieSettingsModal";
 import Navbar from '@/components/ui/Navbar';
 import { ScanProvider } from '@/context/ScanContext';
+import { caveat, inter, playfairDisplaySC } from "@/components/Fonts";
+import { BrickWallFire, GitPullRequestArrow, Globe } from 'lucide-react';
+import Footer from '@/components/ui/Footer';
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
 
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 
 export default function layout({
@@ -17,8 +30,9 @@ export default function layout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" suppressHydrationWarning>
-            <body>
+        <html lang="en"
+            suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+            <body className={inter.className}>
                 <ThemeProvider>
                     <div className="min-h-screen flex flex-col">
                         <Navbar />
@@ -27,13 +41,15 @@ export default function layout({
                         </div> */}
                         {/* main content */}
                         <main className='flex-1 px-4 md:px-6 py-6 max-w-6xl w-full mx-auto'>
-                            <ScanProvider>
-                                {children}
-                            </ScanProvider>
+                            <CookieProvider>
+                                <ScanProvider>
+                                    {children}
+                                </ScanProvider>
+                                <CookieBanner />
+                                <CookieSettingsModal />
+                                <Footer />
+                            </CookieProvider>
                         </main>
-                        <footer className="text-center text-xs text-slate-600 py-4 border-t border-slate-800">
-                            PhishGuard AI · Powered by AI · For educational use
-                        </footer>
                     </div>
                 </ThemeProvider>
             </body>

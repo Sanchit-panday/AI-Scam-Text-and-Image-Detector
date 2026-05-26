@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, History, Image, LayoutDashboard, Menu, Shield, X } from "lucide-react"
+import { BrickWallFire, FileText, History, Image, LayoutDashboard, Menu, X } from "lucide-react"
 
 const navItems = [
     { to: '/', key: "dashboard", label: 'Dashboard', icon: LayoutDashboard },
@@ -18,17 +18,19 @@ function Navbar() {
     return (
         <>
             <header className="sticky top-0 z-40 glass-card rounded-none border-x-0 border-t-0 px-4 md:px-6 h-16 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-900/50">
-                        <Shield size={20} className="text-white" aria-hidden />
-                    </div>
-                    <span className="font-bold text-lg tracking-tight text-white flex items-center">
-                        PhishGuard
-                        <span className="ml-1.5 text-[10px] font-medium text-cyan-400 bg-cyan-400/10 border border-cyan-400/20 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
-                            AI
+                <a href="/">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-900/50">
+                            <BrickWallFire size={20} className="text-red-300" aria-hidden />
+                        </div>
+                        <span className="font-bold text-lg tracking-tight text-white flex items-center">
+                            Mildy
+                            <span className="ml-1.5 text-[10px] font-medium text-cyan-400 bg-cyan-400/10 border border-cyan-400/20 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                                AI
+                            </span>
                         </span>
-                    </span>
-                </div>
+                    </div>
+                </a>    
 
                 {/* Desktop nav */}
                 <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
