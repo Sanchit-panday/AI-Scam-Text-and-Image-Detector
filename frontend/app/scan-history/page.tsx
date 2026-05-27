@@ -63,7 +63,7 @@ function HistoryRow({ item, onDelete, expanded, onToggle }: HistoryRowProps) {
 
                 {/* Confidence */}
                 <div className="text-right shrink-0">
-                    <p className="text-sm font-bold text-white tabular-nums">{Math.round((item.confidence || 0) * 100)}%</p>
+                    <p className="text-sm font-bold text-white tabular-nums">{item.confidence || 0}%</p>
                     <p className="text-xs text-slate-500">confidence</p>
                 </div>
 

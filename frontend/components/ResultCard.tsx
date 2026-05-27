@@ -24,13 +24,11 @@ export default function ResultCard({ result, scanMeta }: { result: Result,  scan
     const [copied, setCopied] = useState(false)
 
     if (!result) return null
-
-    //   const cfg = PREDICTION_CONFIG[prediction?.toLowerCase()] || PREDICTION_CONFIG.suspicious
-
-    const cfg = (result.prediction === 'ham') ? PREDICTION_CONFIG.safe : PREDICTION_CONFIG.suspicious
+    
+    const cfg = (result.prediction === 'safe') ? PREDICTION_CONFIG.safe : PREDICTION_CONFIG.suspicious
     const riskCfg = RISK_CONFIG[result.riskLevel] || RISK_CONFIG.Medium
     const Icon = cfg.icon
-    const pct = Math.round((result.confidence || 0) * 100)
+    const pct = result.confidence || 0
 
     async function copyOcr() {
         await navigator.clipboard.writeText(result.extractedText || "")
@@ -81,7 +79,7 @@ export default function ResultCard({ result, scanMeta }: { result: Result,  scan
                 {result.indicators.length > 0 && (
                     <div>
                         <p className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
-                            <Info size={15} aria-hidden /> Detection Indicators
+                            <Info size={15} aria-hidden />Detected Indicators
                         </p>
                         <ul className="space-y-1.5">
                             {result.indicators.map((r, i) => (

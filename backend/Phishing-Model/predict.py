@@ -1,6 +1,7 @@
 import sys
 import joblib
 import re
+import math
 import json
 from pathlib import Path
 from indicatorDetector import detect_indicators
@@ -17,48 +18,51 @@ text = sys.argv[1]
 
 x = vectorizer.transform([text])
 
-prediction = model.predict(x)[0]
-prob = model.predict_proba(x)[0][1]
-
-predicted_index = list(model.classes_).index(prediction)
-confidence = round(
-    model.predict_proba(x)[0][predicted_index],
-    2
-)
-# tempeorary
-prob = confidence
-
 urls = re.findall(
     r'https?://[^\s]+|www\.[^\s]+',
     text
 )
+urls = [
+    url.rstrip(".,!?:;")
+    for url in urls
+]
+
+# Prediction and confidence percentage
+prediction = model.predict(x)[0]
+
+score = model.decision_function(x)[0]
+
+confidence = (
+    1 /
+    (1 + math.exp(-abs(score)))
+)
+
+confidence = round(
+    confidence * 100,
+    2
+)
+
+# mapping
+prediction_map = {
+    "spam": "scam",
+    "ham": "safe"
+}
+prediction = prediction_map.get(
+    prediction,
+    prediction
+)
+
+# indicator and RiskLevel Calculator
 indicators = detect_indicators(text)
 riskLevel = calculate_risk(
-    prob,
+    confidence,
     len(indicators)
 )
 
-# if hasattr(prediction, "item"):
-#     prediction = prediction.item()
-
-# confidence = prob.tolist() if hasattr(prob, "tolist") else prob
-
-
-
-# predicted_index = list(model.classes_).index(prediction)
-# confidence = float(prob[predicted_index])
-
-# if prob < 0.5:
-#     prob = 1 - prob
-#     prediction = "scam"
-
-
-# prediction = "not a scam" if prediction == "ham" else "scam"
-
-
+# Result
 result = {
     "prediction": prediction,
-    "confidence": prob,
+    "confidence": confidence,
     "riskLevel" : riskLevel,
     "indicators" : indicators,
     "urls" : urls

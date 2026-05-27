@@ -1,5 +1,6 @@
+import Image from 'next/image'
 import { openSans, playfairDisplay } from '@/components/Fonts'
-import React from 'react'
+import Aboutus from "@/public/Assets/Images/Aboutus.webp"
 
 function page() {
     return (
@@ -9,7 +10,7 @@ function page() {
                     About us
                 </div>
                 <div className='w-full flex justify-center'>
-                    <img src="/Assets/Images/ABoutus.webp" className='w-3xl rounded-2xl' alt="" />
+                    <Image src={Aboutus} alt="image" className='w-3xl rounded-2xl' />
                 </div>
             </div>
             <div className='flex flex-col gap-y-12.5'>

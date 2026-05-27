@@ -2,7 +2,7 @@
 import { createContext, useContext, useReducer, useCallback, useEffect, ReactNode } from 'react'
 
 
-const HISTORY_KEY = 'phishguard_history'
+const HISTORY_KEY = 'mildyAI_history'
 const MAX_HISTORY = 100
 
 export interface ScanHistoryItem {
@@ -68,7 +68,6 @@ function saveHistory(history: ScanHistoryItem[]) {
 }
 
 const initialState = {
-    // history: loadHistory(),
     history: [],
 }
 function reducer(
@@ -149,7 +148,7 @@ export function ScanProvider({
                 (sum: number, item) =>
                     sum + item.confidence,
                 0
-            ) / state.history.length * 100)
+            ) / state.history.length)
             : 0,
     }
 
