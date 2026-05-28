@@ -10,7 +10,7 @@ export const blogList: BlogItem[] = [
     {
         id: 1,
         slug: "how-ai-is-making-phishing-attacks-more-dangerous-in-2026",
-        image: "/Assets/images/how-ai-is-making-phishing-attacks-more-dangerous-in-2026.png",
+        image: "/Assets/Images/how-ai-is-making-phishing-attacks-more-dangerous-in-2026.png",
         title: "How AI Is Making Phishing Attacks More Dangerous in 2026",
         description: "AI is supercharging phishing attacks in 2026 — from flawless scam emails to deepfake voice calls that sound like your loved ones. Learn how cybercriminals are misusing AI tools, how hyper-personalized scams work, and the practical steps you can take to stay protected.",
         date: new Date("2026-05-28")
