@@ -40,10 +40,12 @@ export default function layout({
                             <ThemeToggle />
                         </div> */}
                         {/* main content */}
-                        <main className='flex-1 px-4 md:px-6 py-6 max-w-6xl w-full mx-auto'>
+                        <main className='flex-1 
+                        
+                         py-6 '>
                             <CookieProvider>
                                 <ScanProvider>
-                                    <div className='px-2'>
+                                    <div className='px-6 md:px-6 max-w-6xl w-full mx-auto'>
                                         {children}
                                     </div>
                                 </ScanProvider>

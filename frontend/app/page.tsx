@@ -87,7 +87,7 @@ export default function Home() {
   };
   return (
     <>
-      <div className="space-y-8">
+      <div className="space-y-8 max-w-6xl">
         {/* Hero */}
         <div className="relative glass-card p-8 overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-br from-brand-900/30 to-transparent pointer-events-none" />

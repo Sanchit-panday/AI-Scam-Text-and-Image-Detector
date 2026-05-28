@@ -1,18 +1,53 @@
+"use client"
+import { motion } from 'framer-motion';
 import Image from 'next/image'
 import { openSans, playfairDisplay } from '@/components/Fonts'
 import Aboutus from "@/public/Assets/Images/Aboutus.webp"
-
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.2,
+        },
+    },
+};
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: 'easeOut' as const },
+    },
+};
 function page() {
     return (
-        <div className="w-full flex flex-col justify-center px-6 pt-10 pb-20 md:pt-18.5 md:pb-50 gap-12.5 md:gap-25">
-            <div className='flex flex-col gap-12.5 md:gap-25 items-center w-full'>
-                <div className={`text-[32px] md:text-[48px] ${playfairDisplay.className}`}>
-                    About us
-                </div>
-                <div className='w-full flex justify-center'>
+        <div className="w-full flex flex-col justify-center px-6 pt-10 pb-20 md:pt-18.5 md:pb-25 gap-12.5 md:gap-25">
+            <motion.div
+                // variants={containerVariants}
+                // initial="hidden"
+                // animate="visible"
+                className='flex flex-col items-center w-full'>
+                <motion.div
+                    // initial={{ opacity: 0, y: 10 }}
+                    // whileInView={{ opacity: 1, y: 0 }}
+                    // transition={{ duration: 0.6, ease: 'easeOut' as const }}
+                    className='text-blue-500/70 text-lg mb-4'
+                >
+                //<span className='text-foreground/50'> About us </span>//
+                </motion.div>
+                <motion.div
+                    variants={itemVariants}
+                    className={`text-[32px] md:text-[48px] mb-12.5 md:mb-25.5 font-semibold text-center`}>
+                    Your first line of defense<p className='text-blue-500'>against bad links</p>
+                </motion.div>
+                <motion.div
+                    variants={itemVariants}
+                    className='w-full flex justify-center'>
                     <Image src={Aboutus} alt="image" className='w-3xl rounded-2xl' />
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
             <div className='flex flex-col gap-y-12.5'>
                 <div className='grid md:grid-cols-2'>
                     <div className="text-sm font-semibold text-slate-400/80 mb-2">Who We Are</div>
@@ -94,5 +129,4 @@ function page() {
         </div>
     )
 }
-
 export default page

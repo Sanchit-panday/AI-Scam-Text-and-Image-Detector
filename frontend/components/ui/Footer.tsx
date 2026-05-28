@@ -28,10 +28,11 @@ function Footer() {
                         <div className='space-y-3'>
                             <p className='font-semibold'>Resources</p>
                             <ul className='space-y-2 quickLink'>
-                                <li><a href="/">Blogs</a></li>
-                                <li><a href="/about" target="_blank">About us</a></li>
-                                <li><a href="/">Terms of service</a></li>
-                                <li><a href="/">Privacy policy</a></li>
+                                <li><a href="/blog">Blogs</a></li>
+                                <li><a href="/about">About us</a></li>
+                                {/* <li><a href="/">Terms of service</a></li> */}
+                                {/* <li><a href="/">Privacy policy</a></li> */}
+                                <li><a href="/contact">Contact us</a></li>
                                 <li><button onClick={() => setShowSettings(true)} className='hover:underline'> Manage Cookies</button></li>
                             </ul>
                         </div>

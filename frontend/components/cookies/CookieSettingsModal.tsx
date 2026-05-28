@@ -111,7 +111,7 @@ export default function CookieSettingsModal() {
                                 consentGiven: true,
                             })
                         }
-                        className="rounded bg-primary px-4 py-2 bg-gray-800/50 hover:bg-gray-500/50 transition-all duration-300 ease-in-out"
+                        className="rounded bg-primary px-4 py-2 hover:bg-gray-500/50 transition-all duration-300 ease-in-out"
                     >
                         Save Preferences
                     </button>

@@ -1,8 +1,8 @@
-# ScamShield AI 🛡️
+# Mildy AI 🛡️
 
 An AI-powered phishing and scam detection platform that analyzes both text messages and screenshots to identify potential scams, phishing attempts, and suspicious content using Machine Learning and OCR.
 
-🔗 **Live Demo:** [PhishGuard.com](https://ai-scam-text-and-image-detector.vercel.app/)
+🔗 **Live Demo:** [MildyAI.com](https://ai-scam-text-and-image-detector.vercel.app/)
 
 🔗 **GitHub Repository:** [Github Link](https://github.com/Sanchit-panday/AI-Scam-Text-and-Image-Detector)
 
@@ -10,7 +10,7 @@ An AI-powered phishing and scam detection platform that analyzes both text messa
 
 ## Overview
 
-ScamShield AI is a full-stack security application designed to help users identify potentially malicious messages and phishing attempts.
+Mildy AI is a full-stack security application designed to help users identify potentially malicious messages and phishing attempts.
 
 The platform supports:
 
@@ -322,7 +322,7 @@ AI-Scam-Text-and-Image-Detector
 
 ## Why This Project?
 
-Phishing and online scams remain one of the most common cybersecurity threats. ScamShield AI demonstrates how machine learning, OCR, and modern full-stack technologies can be combined to help users identify potentially malicious content quickly and effectively.
+Phishing and online scams remain one of the most common cybersecurity threats. Mildy AI demonstrates how machine learning, OCR, and modern full-stack technologies can be combined to help users identify potentially malicious content quickly and effectively.
 
 ---
 
