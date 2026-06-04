@@ -16,7 +16,6 @@ import CookieSettingsModal from "@/components/cookies/CookieSettingsModal";
 import Navbar from '@/components/ui/Navbar';
 import { ScanProvider } from '@/context/ScanContext';
 import { caveat, inter, playfairDisplaySC } from "@/components/Fonts";
-import { BrickWallFire, GitPullRequestArrow, Globe } from 'lucide-react';
 import Footer from '@/components/ui/Footer';
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -40,9 +39,7 @@ export default function layout({
                             <ThemeToggle />
                         </div> */}
                         {/* main content */}
-                        <main className='flex-1 
-                        
-                         py-6 '>
+                        <main className='flex-1 py-6 '>
                             <CookieProvider>
                                 <ScanProvider>
                                     <div className='px-6 md:px-6 max-w-6xl w-full mx-auto'>

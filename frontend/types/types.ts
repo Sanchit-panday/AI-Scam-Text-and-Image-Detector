@@ -23,3 +23,10 @@ export const defaultCookiePreferences: CookiePreferences = {
   advertising: false,
   consentGiven: false,
 };
+export interface DomainAgeResult {
+  domain: string;
+  created_date: string | null;
+  age_days: number | null;
+  riskLevel: string;
+  error?: string | null;
+}

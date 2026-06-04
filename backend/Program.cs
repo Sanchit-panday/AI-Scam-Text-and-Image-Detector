@@ -1,9 +1,14 @@
-using PhishingDetector.API.Services;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http.Features;
-
+using Nager.PublicSuffix;
+using Nager.PublicSuffix.RuleProviders;
+using PhishingDetector.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var ruleProvider = new SimpleHttpRuleProvider();
+await ruleProvider.BuildAsync();
+builder.Services.AddSingleton(new DomainParser(ruleProvider));
 
 builder.Services.Configure<FormOptions>(options =>
 {
@@ -12,17 +17,18 @@ builder.Services.Configure<FormOptions>(options =>
 
 builder.Services.AddRateLimiter(options =>
 {
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
-        context =>
-            RateLimitPartition.GetFixedWindowLimiter(
-                partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                factory: _ => new FixedWindowRateLimiterOptions
-                {
-                    PermitLimit = 20,
-                    Window = TimeSpan.FromMinutes(1),
-                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                    QueueLimit = 2
-                }));
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 20,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 2,
+            }
+        )
+    );
 
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.OnRejected = async (context, token) =>
@@ -35,18 +41,21 @@ builder.Services.AddRateLimiter(options =>
                 "error": "Too many requests. Please try again later."
             }
             """,
-            token);
+            token
+        );
     };
 });
 
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<PythonPredictionService>();
+builder.Services.AddScoped<WebsiteAnalysisService>();
 
 // environment requirements
 var allowedOrigins =
-    Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")
-    ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+    Environment
+        .GetEnvironmentVariable("ALLOWED_ORIGINS")
+        ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
     ?? [];
 builder.Services.AddCors(options =>
 {
@@ -54,11 +63,9 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         policy =>
         {
-            policy
-                .WithOrigins(allowedOrigins)
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+            policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
+        }
+    );
 });
 
 if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
@@ -78,11 +85,17 @@ app.UseCors("AllowFrontend");
 app.MapControllers();
 
 // Health endpoint
-app.MapGet("/health", () => Results.Ok(new
-{
-    status = "Healthy",
-    service = "AI Scam Detector API",
-    timestamp = DateTime.UtcNow
-}));
+app.MapGet(
+    "/health",
+    () =>
+        Results.Ok(
+            new
+            {
+                status = "Healthy",
+                service = "MildyAPI",
+                timestamp = DateTime.UtcNow,
+            }
+        )
+);
 
 app.Run();

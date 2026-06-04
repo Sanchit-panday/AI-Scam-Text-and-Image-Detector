@@ -22,6 +22,7 @@ function Footer() {
                             <ul className='space-y-2 quickLink'>
                                 <li><a href="/text-analysis">Text analyzer</a></li>
                                 <li><a href="/image-analysis">Image analyzer</a></li>
+                                <li><a href="/domain-age-analysis">Website Age</a></li>
                             </ul>
                         </div>
                         {/* Resources */}

@@ -1,10 +1,10 @@
 import {
-    ShieldCheck, ShieldAlert, ShieldX, AlertTriangle,
+    ShieldCheck, ShieldAlert, ShieldX, ShieldQuestionMark, AlertTriangle,
     Info, Copy, Check, ExternalLink, AlertCircle
 } from 'lucide-react'
 import { useState } from 'react';
-import ReportButton from './ReportButton';
-import type {Result, DomainAgeResult, ScanMeta} from "@/types/types"
+import ReportButton from '../ReportButton';
+import type { DomainAgeResult, ScanMeta } from "@/types/types"
 
 const PREDICTION_CONFIG = {
     safe: { label: 'Safe', icon: ShieldCheck, bg: 'bg-emerald-900/40', border: 'border-emerald-700/40', text: 'text-emerald-300', badge: 'bg-emerald-900/60 text-emerald-300' },
@@ -12,6 +12,7 @@ const PREDICTION_CONFIG = {
     spam: { label: 'Spam', icon: ShieldX, bg: 'bg-red-900/40', border: 'border-red-700/40', text: 'text-red-300', badge: 'bg-red-900/60 text-red-300' },
     scam: { label: 'Scam', icon: ShieldX, bg: 'bg-red-900/40', border: 'border-red-700/40', text: 'text-red-300', badge: 'bg-red-900/60 text-red-300' },
     phishing: { label: 'Phishing', icon: ShieldAlert, bg: 'bg-rose-900/40', border: 'border-rose-700/40', text: 'text-rose-300', badge: 'bg-rose-900/60 text-rose-300' },
+    unknown: { label: 'Unknown', icon: ShieldQuestionMark, bg: 'bg-gray-900/40', border: 'border-gray-700/40', text: 'text-gray-300', badge: 'bg-gray-900/60 text-gray-300' },
 }
 
 const RISK_CONFIG = {
@@ -20,20 +21,53 @@ const RISK_CONFIG = {
     High: { color: 'bg-red-500', text: 'text-red-300', badge: 'bg-red-900/60 text-red-300' },
 }
 
-export default function ResultCard({ result, scanMeta }: { result: Result,  scanMeta: ScanMeta}) {
-    const [copied, setCopied] = useState(false)
+export default function DomainResultCard({ domainAgeResult, scanMeta }: { domainAgeResult: DomainAgeResult, scanMeta: ScanMeta }) {
 
-    if (!result) return null
-    
-    const cfg = (result.prediction === 'safe') ? PREDICTION_CONFIG.safe : PREDICTION_CONFIG.suspicious
-    const riskCfg = RISK_CONFIG[result.riskLevel] || RISK_CONFIG.Medium
-    const Icon = cfg.icon
-    const pct = result.confidence || 0
 
-    async function copyOcr() {
-        await navigator.clipboard.writeText(result.extractedText || "")
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+    const domain_age = domainAgeResult.age_days || 0;
+    const domainRiskLevel = domainAgeResult.riskLevel || "Unavailable";
+    if (!domainAgeResult) return null
+
+    var riskCfg = RISK_CONFIG.Medium;
+    var cfg = PREDICTION_CONFIG.unknown;
+    var pct = 50
+
+    if (domainAgeResult.error == null) {
+        if (domain_age < 180) {
+            cfg = PREDICTION_CONFIG.suspicious;
+            riskCfg = RISK_CONFIG.High;
+        } else if (domain_age < 365) {
+            cfg = PREDICTION_CONFIG.spam;
+            riskCfg = RISK_CONFIG.Medium;
+        }
+        cfg = PREDICTION_CONFIG.safe;
+        riskCfg = RISK_CONFIG.Low;
+    }
+    const Icon = cfg.icon;
+
+    if (domain_age < 14) {
+        // critical risk
+        pct = 95
+    }
+    else if (domain_age < 90) {
+        // very high risk
+        pct = 75
+    }
+    else if (domain_age < 180) {
+        // high risk
+        pct = 65
+    }
+    else if (domain_age < 365) {
+        // medium risk
+        pct = 50
+    }
+    else if (domain_age < 1095) {
+        // low risk
+        pct = 25;
+    }
+    else {
+        // very low risk
+        pct = 10;
     }
 
     return (
@@ -54,10 +88,10 @@ export default function ResultCard({ result, scanMeta }: { result: Result,  scan
                         </div>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`risk-badge ${riskCfg.badge}`}>{result.riskLevel} Risk</span>
-                        {scanMeta && (
-                            <ReportButton result={result} scanMeta={scanMeta} />
-                        )}
+                        <span className={`risk-badge ${riskCfg.badge}`}>{domainRiskLevel} Risk</span>
+                        {/* {scanMeta && (
+                            <ReportButton result={domainAgeResult} scanMeta={scanMeta} />
+                        )} */}
                     </div>
                 </div>
 
@@ -76,7 +110,7 @@ export default function ResultCard({ result, scanMeta }: { result: Result,  scan
                 </div>
 
                 {/* indicators */}
-                {result.indicators.length > 0 && (
+                {/* {result.indicators.length > 0 && (
                     <div>
                         <p className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
                             <Info size={15} aria-hidden />Detected Indicators
@@ -90,45 +124,7 @@ export default function ResultCard({ result, scanMeta }: { result: Result,  scan
                             ))}
                         </ul>
                     </div>
-                )}
-
-                {/* URLs */}
-                {result.urls.length > 0 && (
-                    <div>
-                        <p className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
-                            <ExternalLink size={15} aria-hidden /> Detected URLs
-                        </p>
-                        <ul className="space-y-1.5">
-                            {result.urls.map((url, i) => (
-                                <li key={i} className="flex items-center gap-2 text-xs bg-red-900/20 border border-red-800/30 rounded-lg px-3 py-1.5 font-mono text-red-300 break-all">
-                                    <AlertCircle size={12} className="shrink-0 text-red-400" aria-hidden />
-                                    {url}
-                                    <span className="ml-auto text-red-400 text-xs whitespace-nowrap">Suspicious</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {/* OCR Text */}
-                {result.extractedText && (
-                    <div>
-                        <div className="flex items-center justify-between mb-2">
-                            <p className="text-sm font-semibold text-slate-300">Extracted Text (OCR)</p>
-                            <button
-                                onClick={copyOcr}
-                                className="button-ghost text-xs py-1 px-2 gap-1.5"
-                                aria-label="Copy extracted text"
-                            >
-                                {copied ? <Check size={13} /> : <Copy size={13} />}
-                                {copied ? 'Copied!' : 'Copy'}
-                            </button>
-                        </div>
-                        <pre className="text-xs text-slate-300 bg-slate-900/50 border border-slate-700/50 rounded-xl p-3 whitespace-pre-wrap break-all max-h-40 overflow-y-auto">
-                            {result.extractedText}
-                        </pre>
-                    </div>
-                )}
+                )} */}
             </section>
         </>
     )

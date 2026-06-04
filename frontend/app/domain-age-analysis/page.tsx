@@ -1,35 +1,37 @@
-"use client";
-import ErrorAlert from "@/components/Error";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import ResultCard from "@/components/ResultCard";
-import { useScanStore } from "@/context/ScanContext";
-import { AlertCircle, FileText, Loader, Send, X } from "lucide-react";
+"use client"
+import ErrorAlert from "@/components/Error"
+import LoadingSpinner from "@/components/LoadingSpinner"
+import DomainResultCard from "@/components/ResultCards/DomainResultCard"
+import { AlertCircle, FileText, Send, X } from "lucide-react"
 import { useRef, useState } from "react";
-import type { ScanMeta } from "@/types/types"
 
-export default function TextAnalysisPage() {
-    const MAX_MESSAGE_LENGTH = 5000;
+import { getDomainAge } from "./getDomainAge"
+import { DomainAgeResult, ScanMeta } from "@/types/types"
+import { useScanStore } from "@/context/ScanContext"
+
+function page() {
+    const MAX_URL_LENGTH = 253;
     const PLACEHOLDER_EXAMPLES = [
-        'Paste an email, SMS, chat message, social media post, or website content here…\n\nExample: "URGENT: Your bank account has been suspended. Click here to verify your identity immediately: http://suspicious-link.com"',
+        'paste an url',
     ]
 
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
-    const [result, setResult] = useState<any>(null);
+    const [url, setUrl] = useState("");
+    const [result, setResult] = useState<DomainAgeResult | null>(null);
     const [error, setError] = useState<any>(null);
     const [scanMeta, setScanMeta] = useState<ScanMeta | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-
-    const remaining = MAX_MESSAGE_LENGTH - message.length
-    const isOverLimit = message.length > MAX_MESSAGE_LENGTH
+    const remaining = MAX_URL_LENGTH - url.length
+    const isOverLimit = url.length > MAX_URL_LENGTH
 
     const { addScan } = useScanStore();
 
-    const analyzeMessage = async () => {
 
-        if (!message.trim()) {
-            setError("Please enter a message.");
+    const analyzeDomainAge = async (url: string) => {
+
+        if (!url.trim()) {
+            setError("Please enter a domain or URL.");
             return;
         }
 
@@ -38,67 +40,37 @@ export default function TextAnalysisPage() {
             setResult(null);
             setError(null);
 
-            // environment Variables
-            const BASE_URL =
-                process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
-            
-            const response = await fetch(
-                `${BASE_URL}/api/phishing/check`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        message,
-                    }),
-                }
+            const data = await getDomainAge(url);
+
+            const meta: ScanMeta = { type: 'text', input: url, timestamp: new Date().toISOString() }
+            // console.log(data)
+            setResult(data);
+            setScanMeta(meta);
+
+            // addScan({
+            //     type: "text",
+            //     prediction: data.prediction,
+            //     confidence: data.confidence,
+            //     riskLevel: data.risk,
+            //     message,
+            //     urls: data.urls ?? [],
+            //     indicators: data.indicators ?? [],
+            // });
+
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Unknown error occurred"
             );
 
-            if (!response.ok) {
-
-                if (response.status === 429) {
-                    throw new Error(
-                        "Too many requests. Please wait a minute and try again."
-                    );
-                }
-                
-                const errorData = await response.json();
-
-                throw new Error(
-                    errorData.error || "Server error"
-                );
-            }
-
-            const data = await response.json();
-            const meta: ScanMeta = { type: 'text', input: message, timestamp: new Date().toISOString() }
-
-            setResult(data);
-            setScanMeta(meta)
-
-            // save to localStorage
-            addScan({
-                type: "text",
-                prediction: data.prediction,
-                confidence: data.confidence,
-                riskLevel: data.riskLevel,
-                message,
-                urls: data.urls ?? [],
-                indicators: data.indicators ?? [],
-            });
-        } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError("Unknown error occurred");
-            }
         } finally {
             setLoading(false);
         }
     }
 
     const clearForm = () => {
-        setMessage("");
+        setUrl("");
         setResult(null);
         setError(null);
         setScanMeta(null)
@@ -110,7 +82,7 @@ export default function TextAnalysisPage() {
     ) {
         if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
             e.preventDefault();
-            analyzeMessage();
+            analyzeDomainAge(url);
         }
     }
     return (
@@ -119,29 +91,29 @@ export default function TextAnalysisPage() {
             <div className="space-y-6 max-w-3xl">
                 <div className="flex items-center gap-3 mb-1">
                     <FileText size={22} className="text-brand-400" aria-hidden />
-                    <h1 className="text-2xl font-bold text-white">Text Analysis</h1>
+                    <h1 className="text-2xl font-bold text-white">URL Analysis</h1>
                 </div>
-                <p className="text-slate-400 text-sm">Paste any suspicious message, email, SMS, or web content to scan it with AI.</p>
+                <p className="text-slate-400 text-sm">Paste any suspicious URL and we will check it for you.</p>
 
                 {/* Input area */}
                 <div className="glass-card p-5 space-y-4">
                     <div className="relative">
                         <label htmlFor="text-input" className="block text-sm font-medium text-slate-300 mb-2">
-                            Paste content to analyze
+                            Paste URL to analyze
                         </label>
                         <textarea
                             id="message"
                             ref={textareaRef}
-                            value={message}
-                            onChange={e => setMessage(e.target.value)}
+                            value={url}
+                            onChange={e => setUrl(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder={PLACEHOLDER_EXAMPLES[0]}
-                            rows={10}
+                            rows={1}
                             disabled={loading}
                             aria-describedby="char-count-hint"
                             aria-invalid={isOverLimit}
-                            maxLength={MAX_MESSAGE_LENGTH + 500}
-                            className={`input-base resize-y min-h-40 font-mono text-sm leading-relaxed disabled:opacity-50 w-full bg-slate-900/60 border border-slate-700 rounded-xl px-4 py-3
+                            maxLength={MAX_URL_LENGTH + 500}
+                            className={`input-base resize-y min-h-10 font-mono text-sm leading-relaxed disabled:opacity-50 w-full bg-slate-900/60 border border-slate-700 rounded-xl px-4 py-3
                             text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors ${isOverLimit ? 'ring-2 ring-red-500 border-red-600' : ''}`}
                         />
                     </div>
@@ -152,12 +124,12 @@ export default function TextAnalysisPage() {
                             id="char-count-hint"
                             className={`text-xs tabular-nums ${(isOverLimit) ? 'text-red-400' : (remaining) < 200 ? 'text-amber-400' : 'text-slate-500'}`}
                         >
-                            {message.length.toLocaleString()} / {MAX_MESSAGE_LENGTH.toLocaleString()} characters
+                            {url.length.toLocaleString()} / {MAX_URL_LENGTH.toLocaleString()} characters
                             {isOverLimit && ` (${Math.abs(remaining)} over limit)`}
                         </p>
 
                         <div className="flex items-center gap-2">
-                            {message.length > 0 && (
+                            {url.length > 0 && (
                                 <button
                                     onClick={clearForm}
                                     className="button-ghost text-sm py-2 px-3"
@@ -170,10 +142,10 @@ export default function TextAnalysisPage() {
 
                             {/* submit button */}
                             <button
-                                onClick={analyzeMessage}
+                                onClick={() => analyzeDomainAge}
                                 disabled={loading || !!error}
                                 className="button-primary"
-                                aria-label="Analyze text"
+                                aria-label="Analyze url"
                             >
                                 <Send size={16} aria-hidden />
                                 {loading ? 'Analyzing…' : 'Analyze'}
@@ -181,10 +153,10 @@ export default function TextAnalysisPage() {
                         </div>
                     </div>
 
-                    {(message.length > MAX_MESSAGE_LENGTH) && (
-                        <ErrorAlert message={`Text exceeds the ${MAX_MESSAGE_LENGTH.toLocaleString()} character limit. Please shorten it.`} />
+                    {(url.length > MAX_URL_LENGTH) && (
+                        <ErrorAlert message={`URL exceeds the ${MAX_URL_LENGTH.toLocaleString()} character limit. Please shorten it.`} />
                     )}
-                    {message.trim().length === 0 && !loading && (
+                    {url.trim().length === 0 && !loading && (
                         <p className="text-xs text-slate-600 flex items-center gap-1.5">
                             <AlertCircle size={12} /> Content is required to run the analysis.
                         </p>
@@ -205,11 +177,13 @@ export default function TextAnalysisPage() {
 
                 {/* Result */}
                 {result && scanMeta && !loading && (
-                    <ResultCard result={result}
+                    <DomainResultCard domainAgeResult={result}
                         scanMeta={scanMeta}
                     />
                 )}
             </div>
         </>
-    );
+    )
 }
+
+export default page
