@@ -1,4 +1,5 @@
 namespace PhishingDetector.API.Models;
+
 using System.ComponentModel.DataAnnotations;
 
 public class MessageRequest

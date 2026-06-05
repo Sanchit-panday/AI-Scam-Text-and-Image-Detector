@@ -4,7 +4,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react';
 import ReportButton from './ReportButton';
-import type {Result, DomainAgeResult, ScanMeta} from "@/types/types"
+import type { Result, ScanMeta } from "@/types/types"
 
 const PREDICTION_CONFIG = {
     safe: { label: 'Safe', icon: ShieldCheck, bg: 'bg-emerald-900/40', border: 'border-emerald-700/40', text: 'text-emerald-300', badge: 'bg-emerald-900/60 text-emerald-300' },
@@ -20,11 +20,11 @@ const RISK_CONFIG = {
     High: { color: 'bg-red-500', text: 'text-red-300', badge: 'bg-red-900/60 text-red-300' },
 }
 
-export default function ResultCard({ result, scanMeta }: { result: Result,  scanMeta: ScanMeta}) {
+export default function ResultCard({ result, scanMeta }: { result: Result, scanMeta: ScanMeta }) {
     const [copied, setCopied] = useState(false)
 
     if (!result) return null
-    
+
     const cfg = (result.prediction === 'safe') ? PREDICTION_CONFIG.safe : PREDICTION_CONFIG.suspicious
     const riskCfg = RISK_CONFIG[result.riskLevel] || RISK_CONFIG.Medium
     const Icon = cfg.icon
@@ -55,9 +55,22 @@ export default function ResultCard({ result, scanMeta }: { result: Result,  scan
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                         <span className={`risk-badge ${riskCfg.badge}`}>{result.riskLevel} Risk</span>
+                        {/* {scanMeta && (
+                            <ReportButton result={{ type: "image" }} scanMeta={scanMeta} />
+                        )} */}
                         {scanMeta && (
-                            <ReportButton result={result} scanMeta={scanMeta} />
+                            <ReportButton result={{
+                                type: scanMeta.type as "text" | "image",
+                                prediction: result.prediction,
+                                confidence: result.confidence,
+                                riskLevel: result.riskLevel,
+                                reasons: result.indicators,
+                                extractedText: result.extractedText,
+                                urls: result.urls,
+
+                            }} scanMeta={scanMeta} />
                         )}
+
                     </div>
                 </div>
 

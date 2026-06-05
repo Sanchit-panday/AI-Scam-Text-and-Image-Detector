@@ -41,7 +41,7 @@ export default function TextAnalysisPage() {
             // environment Variables
             const BASE_URL =
                 process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
-            
+
             const response = await fetch(
                 `${BASE_URL}/api/phishing/check`,
                 {
@@ -62,7 +62,7 @@ export default function TextAnalysisPage() {
                         "Too many requests. Please wait a minute and try again."
                     );
                 }
-                
+
                 const errorData = await response.json();
 
                 throw new Error(
@@ -150,14 +150,14 @@ export default function TextAnalysisPage() {
                         {/* Char count */}
                         <p
                             id="char-count-hint"
-                            className={`text-xs tabular-nums ${(isOverLimit) ? 'text-red-400' : (remaining) < 200 ? 'text-amber-400' : 'text-slate-500'}`}
+                            className={`text-xs tabular-nums ${(isOverLimit) ? 'text-red-400' : (message.length / MAX_MESSAGE_LENGTH) > 0.7 ? 'text-amber-400' : 'text-slate-500'}`}
                         >
                             {message.length.toLocaleString()} / {MAX_MESSAGE_LENGTH.toLocaleString()} characters
                             {isOverLimit && ` (${Math.abs(remaining)} over limit)`}
                         </p>
 
                         <div className="flex items-center gap-2">
-                            {message.length > 0 && (
+                            {(message.length > 0 || result || error) && (
                                 <button
                                     onClick={clearForm}
                                     className="button-ghost text-sm py-2 px-3"

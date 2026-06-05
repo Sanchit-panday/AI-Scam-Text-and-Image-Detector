@@ -1,30 +1,68 @@
 "use client"
 import { createContext, useContext, useReducer, useCallback, useEffect, ReactNode } from 'react'
 
-
 const HISTORY_KEY = 'mildyAI_history'
 const MAX_HISTORY = 100
 
-export interface ScanHistoryItem {
+// type defination of scan
+type ScanType =
+    | "text"
+    | "image"
+    | "domain-age"
+    | "ssl"
+    | "website";
+
+interface BaseScan {
     id: string;
     timestamp: string;
+    type: ScanType;
+}
+
+export interface TextScan extends BaseScan {
+    type: "text";
+
     prediction: string;
     confidence: number;
-    riskLevel: "Low" | "Medium" | "High";
-    type: "text" | "image";
+    riskLevel: string;
 
     message?: string;
+    urls?: string[];
+    indicators?: string[];
+}
+
+export interface ImageScan extends BaseScan {
+    type: "image";
+
+    prediction: string;
+    confidence: number;
+    riskLevel: string;
+
     extractedText?: string;
     urls?: string[];
     indicators?: string[];
 }
+export interface DomainAgeScan extends BaseScan {
+    type: "domain-age";
+
+    url: string;
+    createdAt?: string;
+    age?: number;
+    riskLevel: "Low" | "Medium" | "High" | "Unavailable";
+    // riskLevel: string;
+}
+
+export type ScanHistoryItem =
+    | TextScan
+    | ImageScan
+    | DomainAgeScan
+
 type ScanState = {
     history: ScanHistoryItem[];
 };
 type ScanAction =
     | {
         type: "ADD_SCAN";
-        payload: Omit<ScanHistoryItem, "id" | "timestamp">;
+        payload: NewScan;
     }
     | {
         type: "DELETE_SCAN";
@@ -37,19 +75,39 @@ type ScanAction =
         type: "LOAD_HISTORY";
         payload: ScanHistoryItem[];
     };
+
+type NewTextScan = Omit<
+    TextScan,
+    "id" | "timestamp"
+>;
+type NewImageScan = Omit<
+    ImageScan,
+    "id" | "timestamp"
+>;
+type NewDomainAgeScan = Omit<
+    DomainAgeScan,
+    "id" | "timestamp"
+>;
+type NewScan =
+    | NewTextScan
+    | NewImageScan
+    | NewDomainAgeScan;
+
 type ScanContextType = {
     history: ScanHistoryItem[];
-    addScan: (
-        payload: Omit<ScanHistoryItem, "id" | "timestamp">
-    ) => void;
+
+    addScan: (payload: NewScan) => void;
+
     deleteScan: (id: string) => void;
     clearHistory: () => void;
+
     metrics: {
         total: number;
         safe: number;
         suspicious: number;
         scam: number;
         avgConfidence: number;
+        domainChecks: number;
     };
 };
 function loadHistory(): ScanHistoryItem[] {
@@ -70,18 +128,20 @@ function saveHistory(history: ScanHistoryItem[]) {
 const initialState = {
     history: [],
 }
+
 function reducer(
     state: ScanState,
     action: ScanAction
 ): ScanState {
 
+
     switch (action.type) {
         case 'ADD_SCAN': {
-            const entry: ScanHistoryItem = {
-                id: crypto.randomUUID(),
+            const entry = {
                 ...action.payload,
-                timestamp: new Date().toISOString()
-            }
+                id: crypto.randomUUID(),
+                timestamp: new Date().toISOString(),
+            };
             const history = [entry, ...state.history].slice(0, MAX_HISTORY)
             saveHistory(history)
             return { ...state, history }
@@ -117,10 +177,7 @@ export function ScanProvider({
 
     const addScan = useCallback(
         (
-            payload: Omit<
-                ScanHistoryItem,
-                "id" | "timestamp"
-            >
+            payload: NewScan
         ) =>
             dispatch({
                 type: "ADD_SCAN",
@@ -138,17 +195,36 @@ export function ScanProvider({
     );
     const clearHistory = useCallback(() => dispatch({ type: 'CLEAR_HISTORY' }), [])
 
+    const TextScans = state.history.filter(
+        (scan): scan is TextScan =>
+            scan.type === "text"
+    )
+    const ImageScans = state.history.filter(
+        (scan): scan is ImageScan =>
+            scan.type === "image"
+    )
+    const DomainAgeScans = state.history.filter(
+        (scan): scan is DomainAgeScan =>
+            scan.type === "domain-age"
+    );
+    const totalAnalysisScans = TextScans.length + ImageScans.length;
     const metrics = {
         total: state.history.length,
-        safe: state.history.filter(h => h.prediction === 'safe').length,
-        suspicious: state.history.filter(h => h.prediction === 'suspicious').length,
-        scam: state.history.filter(h => ['spam', 'scam', 'phishing'].includes(h.prediction)).length,
-        avgConfidence: state.history.length
-            ? Math.round(state.history.reduce(
-                (sum: number, item) =>
-                    sum + item.confidence,
-                0
-            ) / state.history.length)
+
+        safe: TextScans.filter(h => h.prediction === 'safe').length + ImageScans.filter(h => h.prediction === 'safe').length,
+        suspicious: TextScans.filter(h => h.prediction === 'suspicious').length + ImageScans.filter(h => h.prediction === 'suspicious').length,
+        scam: TextScans.filter(h => ['spam', 'scam', 'phishing'].includes(h.prediction)).length + ImageScans.filter(h => ['spam', 'scam', 'phishing'].includes(h.prediction)).length,
+
+        domainChecks: DomainAgeScans.length,
+
+        // later add confidence from different scans
+        avgConfidence: (TextScans.length + ImageScans.length)
+            ? Math.round((
+                TextScans.reduce((sum: number, item) =>
+                    sum + item.confidence, 0) +
+                ImageScans.reduce((sum: number, item) =>
+                    sum + item.confidence, 0)
+            ) / totalAnalysisScans)
             : 0,
     }
 

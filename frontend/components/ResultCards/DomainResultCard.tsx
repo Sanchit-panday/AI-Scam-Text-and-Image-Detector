@@ -1,8 +1,9 @@
 import {
     ShieldCheck, ShieldAlert, ShieldX, ShieldQuestionMark, AlertTriangle,
-    Info, Copy, Check, ExternalLink, AlertCircle
+    Globe,
+    Calendar,
+    Clock
 } from 'lucide-react'
-import { useState } from 'react';
 import ReportButton from '../ReportButton';
 import type { DomainAgeResult, ScanMeta } from "@/types/types"
 
@@ -23,8 +24,9 @@ const RISK_CONFIG = {
 
 export default function DomainResultCard({ domainAgeResult, scanMeta }: { domainAgeResult: DomainAgeResult, scanMeta: ScanMeta }) {
 
-
-    const domain_age = domainAgeResult.age_days || 0;
+    const domain = domainAgeResult.domain;
+    const domain_date = domainAgeResult.created_date || null;
+    const domain_age = domainAgeResult.age_days || null;
     const domainRiskLevel = domainAgeResult.riskLevel || "Unavailable";
     if (!domainAgeResult) return null
 
@@ -33,42 +35,84 @@ export default function DomainResultCard({ domainAgeResult, scanMeta }: { domain
     var pct = 50
 
     if (domainAgeResult.error == null) {
-        if (domain_age < 180) {
-            cfg = PREDICTION_CONFIG.suspicious;
-            riskCfg = RISK_CONFIG.High;
-        } else if (domain_age < 365) {
-            cfg = PREDICTION_CONFIG.spam;
-            riskCfg = RISK_CONFIG.Medium;
+        if (domain_age != null) {
+            cfg = PREDICTION_CONFIG.safe;
+            riskCfg = RISK_CONFIG.Low;
+
+            if (domain_age < 180) {
+                cfg = PREDICTION_CONFIG.suspicious;
+                riskCfg = RISK_CONFIG.High;
+            } else if (domain_age < 365) {
+                cfg = PREDICTION_CONFIG.spam;
+                riskCfg = RISK_CONFIG.Medium;
+            }
+
+            if (domain_age < 14) {
+                // critical risk
+                pct = 95
+            }
+            else if (domain_age < 90) {
+                // very high risk
+                pct = 75
+            }
+            else if (domain_age < 180) {
+                // high risk
+                pct = 65
+            }
+            else if (domain_age < 365) {
+                // medium risk
+                pct = 50
+            }
+            else if (domain_age < 1095) {
+                // low risk
+                pct = 25;
+            }
+            else {
+                // very low risk
+                pct = 10;
+            }
         }
-        cfg = PREDICTION_CONFIG.safe;
-        riskCfg = RISK_CONFIG.Low;
     }
     const Icon = cfg.icon;
 
-    if (domain_age < 14) {
-        // critical risk
-        pct = 95
-    }
-    else if (domain_age < 90) {
-        // very high risk
-        pct = 75
-    }
-    else if (domain_age < 180) {
-        // high risk
-        pct = 65
-    }
-    else if (domain_age < 365) {
-        // medium risk
-        pct = 50
-    }
-    else if (domain_age < 1095) {
-        // low risk
-        pct = 25;
-    }
-    else {
-        // very low risk
-        pct = 10;
-    }
+    const formatDomainAge = (days: number | null) => {
+        if (days != null) {
+            const value =
+                days < 31
+                    ? days
+                    : days < 365
+                        ? days / 30.44
+                        : days / 365.25;
+
+            const unit =
+                days < 31
+                    ? "day"
+                    : days < 365
+                        ? "month"
+                        : "year";
+
+            const formatted =
+                Number.isInteger(value)
+                    ? value.toString()
+                    : value.toFixed(1);
+
+            return `${formatted} ${unit}${value >= 2 ? "s" : ""} ago`;
+        }
+        return "NA";
+    };
+    const formatCreatedDate = (dateString: string | null) => {
+        if (dateString == null) {
+            return "NA"
+        }
+        return new Date(dateString).toLocaleDateString(
+            "en-US",
+            {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            }
+        );
+    };
 
     return (
         <>
@@ -88,10 +132,17 @@ export default function DomainResultCard({ domainAgeResult, scanMeta }: { domain
                         </div>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`risk-badge ${riskCfg.badge}`}>{domainRiskLevel} Risk</span>
-                        {/* {scanMeta && (
-                            <ReportButton result={domainAgeResult} scanMeta={scanMeta} />
-                        )} */}
+                        {/* <span className={`risk-badge ${riskCfg.badge}`}>{domainRiskLevel}</span> */}
+                        {scanMeta && (
+                            <ReportButton result={{
+                                type: "domain-age",
+                                domain: domainAgeResult.domain,
+                                createdDate: domainAgeResult.created_date ?? "NA",
+                                ageDays: domainAgeResult.age_days ?? undefined,
+                                riskLevel: domainAgeResult.riskLevel,
+                            }}
+                                scanMeta={scanMeta} />
+                        )}
                     </div>
                 </div>
 
@@ -109,22 +160,28 @@ export default function DomainResultCard({ domainAgeResult, scanMeta }: { domain
                     </div>
                 </div>
 
-                {/* indicators */}
-                {/* {result.indicators.length > 0 && (
-                    <div>
-                        <p className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
-                            <Info size={15} aria-hidden />Detected Indicators
-                        </p>
-                        <ul className="space-y-1.5">
-                            {result.indicators.map((r, i) => (
-                                <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                                    <AlertCircle size={14} className={`mt-0.5 shrink-0 ${cfg.text}`} aria-hidden />
-                                    {r}
-                                </li>
-                            ))}
-                        </ul>
+                <div className='w-full border border-gray-700/90'></div>
+
+                <div className='grid grid-cols-2 md:grid-cols-4 justify-items-stretch gap-y-5'>
+                    <div className='p-2 py-3 w-32 space-y-3'>
+                        <div className='flex flex-inline gap-3 text-center text-gray-400 text-sm'><Globe className={`${cfg.text}`} size={20} />DNS NAME</div>
+                        <div className='truncate'>{domain}</div>
                     </div>
-                )} */}
+
+                    <div className='p-2 py-3 space-y-3'>
+                        <div className='flex flex-inline gap-3 text-center text-gray-400 text-sm'><Calendar className={`${cfg.text}`} size={20} />CREATED AT</div>
+                        <div>{formatCreatedDate(domain_date)}</div>
+                    </div>
+
+                    <div className='p-2 py-3 space-y-3'>
+                        <div className='flex flex-inline gap-3 text-center text-gray-400 text-sm'><Clock className={`${cfg.text}`} size={20} />AGE</div>
+                        <div>{formatDomainAge(domain_age)}</div>
+                    </div>
+                    <div className='p-2 py-3 space-y-3 md:border-l-2 md:border-gray-700/90 md:pl-10'>
+                        <div className='flex flex-inline gap-3 text-center text-gray-400 text-sm'><ShieldAlert className={`${cfg.text}`} size={20} />RISK LEVEL</div>
+                        <div>{domainRiskLevel}</div>
+                    </div>
+                </div>
             </section>
         </>
     )

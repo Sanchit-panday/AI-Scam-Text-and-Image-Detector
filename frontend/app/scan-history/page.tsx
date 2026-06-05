@@ -1,9 +1,11 @@
 "use client"
 import { useState } from 'react'
-import { History, Trash2, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, FileText, Image } from 'lucide-react'
+import { History, Trash2, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, FileText, Image, Search } from 'lucide-react'
 import { ScanHistoryItem, useScanStore } from "../../context/ScanContext";
 
 import Link from 'next/link';
+import DomainAgeHistoryCard from './DomainAgeHistoryCard';
+import AnalysisHistoryCard from './AnalysisHistoryCard';
 
 type HistoryRowProps = {
     item: ScanHistoryItem
@@ -11,6 +13,7 @@ type HistoryRowProps = {
     expanded: boolean
     onToggle: () => void
 }
+
 
 const PREDICTION_COLORS = {
     safe: 'bg-emerald-900/50 text-emerald-300 border-emerald-700/40',
@@ -25,93 +28,58 @@ const RISK_DOT = {
     Medium: 'bg-amber-500',
     High: 'bg-red-500',
 }
+const SCANTYPE = {
+    "domain-age": { icon: Search, text: "text-blue-400" },
+    text: { icon: FileText, text: "text-violet-400" },
+    image: { icon: Image, text: "text-brand-400" },
+}
+
 
 function HistoryRow({ item, onDelete, expanded, onToggle }: HistoryRowProps) {
-    const prediction =
-        item.prediction?.toLowerCase() as keyof typeof PREDICTION_COLORS
-    const colorClass =
-        PREDICTION_COLORS[prediction] ??
-        'bg-slate-700 text-slate-300 border-slate-600'
+    function Icon(type: keyof typeof SCANTYPE) {
+        const cfg = SCANTYPE[item.type as keyof typeof SCANTYPE] ?? SCANTYPE.text;
+        const IconComponent = cfg.icon;
+        return (
+            <IconComponent size={15} className={cfg.text} aria-hidden />
+        )
+    }
+    if (item.type === "text" || item.type === "image") {
+        const prediction =
+            item.prediction?.toLowerCase() as keyof typeof PREDICTION_COLORS
+        const colorClass =
+            PREDICTION_COLORS[prediction] ??
+            'bg-slate-700 text-slate-300 border-slate-600'
 
-    const dot = RISK_DOT[item.riskLevel] || 'bg-slate-500'
+        // const dot = RISK_DOT[item.riskLevel] || 'bg-slate-500'
+    }
+    switch (item.type) {
+        case "text":
+        case "image":
+            return (
+                <AnalysisHistoryCard
+                    key={item.id}
+                    type={item.type}
+                    item={item}
+                    expanded={expanded}
+                    onToggle={onToggle}
+                    onDelete={onDelete}
+                />
+            );
 
-    return (
-        <div className="border border-slate-700/50 rounded-xl overflow-hidden mb-2 hover:border-slate-600 transition-colors">
-            <div className="flex items-center gap-3 px-4 py-3">
-                {/* Type icon */}
-                <div className="w-8 h-8 rounded-lg bg-slate-700/50 flex items-center justify-center shrink-0">
-                    {item.type === 'image'
-                        ? <Image size={15} className="text-violet-400" aria-hidden />
-                        : <FileText size={15} className="text-brand-400" aria-hidden />
-                    }
-                </div>
+        case "domain-age":
+            return (
+                <DomainAgeHistoryCard
+                    key={item.id}
+                    item={item}
+                    expanded={expanded}
+                    onToggle={onToggle}
+                    onDelete={onDelete}
+                />
+            );
 
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                        <span className={`risk-badge border', ${colorClass}`}>{item.prediction}</span>
-                        <span className="flex items-center gap-1 text-xs text-slate-500">
-                            <span className={`w-1.5 h-1.5 rounded-full ${dot}`} aria-hidden />
-                            {item.riskLevel} Risk
-                        </span>
-                    </div>
-                    <p className="text-xs text-slate-500 truncate">{new Date(item.timestamp).toLocaleString()}</p>
-                    {/* {item.preview && (
-                        <p className="text-xs text-slate-400 truncate mt-0.5">{item.preview}</p>
-                    )} */}
-                </div>
-
-                {/* Confidence */}
-                <div className="text-right shrink-0">
-                    <p className="text-sm font-bold text-white tabular-nums">{item.confidence || 0}%</p>
-                    <p className="text-xs text-slate-500">confidence</p>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-1 shrink-0">
-                    <button
-                        onClick={onToggle}
-                        className="btn-ghost p-1.5"
-                        aria-label={expanded ? 'Collapse details' : 'Expand details'}
-                    >
-                        {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-                    </button>
-                    <button
-                        onClick={() => onDelete(item.id)}
-                        className="btn-ghost p-1.5 hover:text-red-400"
-                        aria-label="Delete this scan"
-                    >
-                        <Trash2 size={15} />
-                    </button>
-                </div>
-            </div>
-
-            {/* Expanded detail */}
-            {expanded && (
-                <div className="px-4 pb-4 pt-1 border-t border-slate-700/50 bg-slate-900/30 space-y-2">
-                    {item.indicators && item.indicators.length > 0 && (
-                        <div>
-                            <p className="text-xs font-semibold text-slate-400 mb-1">Indicators</p>
-                            <ul className="space-y-0.5">
-                                {item.indicators.map((r, i) => (
-                                    <li key={i} className="text-xs text-slate-300 flex items-center gap-1.5">
-                                        <AlertTriangle size={11} className="text-amber-400 shrink-0" aria-hidden />
-                                        {r}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                    {item.extractedText && (
-                        <div>
-                            <p className="text-xs font-semibold text-slate-400 mb-1">OCR Text</p>
-                            <p className="text-xs text-slate-300 line-clamp-3 font-mono">{item.extractedText}</p>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    )
+        default:
+            return null;
+    }
 }
 
 export default function ScanHistory() {
@@ -123,10 +91,13 @@ export default function ScanHistory() {
     const filtered = filter === 'all'
         ? history
         : history.filter(h => {
-            if (filter === 'threats') return ['spam', 'scam', 'phishing', 'suspicious'].includes(h.prediction?.toLowerCase())
-            if (filter === 'safe') return h.prediction?.toLowerCase() === 'safe'
+            if (filter === 'threats')
+                return (h.type === 'text' || h.type === 'image') && ['spam', 'scam', 'phishing', 'suspicious'].includes(h.prediction?.toLowerCase() ?? '')
+            if (filter === 'safe')
+                return (h.type === 'text' || h.type === 'image') && h.prediction?.toLowerCase() === 'safe'
             if (filter === 'text') return h.type === 'text'
             if (filter === 'image') return h.type === 'image'
+            if (filter === 'domain') return h.type === 'domain-age'
             return true
         })
 
@@ -141,7 +112,6 @@ export default function ScanHistory() {
         setConfirmClear(false)
         setExpandedId(null)
     }
-
 
     return (
         <div className="space-y-6 max-w-3xl">
@@ -177,6 +147,7 @@ export default function ScanHistory() {
                                 { key: 'safe', label: 'Safe' },
                                 { key: 'text', label: 'Text' },
                                 { key: 'image', label: 'Image' },
+                                { key: 'domain', label: 'Domain' },
                             ].map(({ key, label }) => (
                                 <button
                                     key={key}

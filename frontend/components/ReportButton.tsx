@@ -1,67 +1,139 @@
+import jsPDF from "jspdf";
 import { Download } from 'lucide-react'
-import type {ScanMeta} from "@/types/types"
-type ReportResult = {
-    prediction?: string;
-    confidence?: number;
-    riskLevel?: string;
-    reasons?: string[];
-    extractedText?: string;
-    urls?: string[];
-};
+import type { ScanMeta } from "@/types/types"
+type ReportResult =
+    | {
+        type: "text" | "image" ;
+
+        prediction?: string;
+        confidence?: number;
+        riskLevel?: string;
+        reasons?: string[];
+        extractedText?: string;
+        urls?: string[];
+    }
+    | {
+        type: "domain-age";
+
+        domain: string;
+        createdDate?: string;
+        ageDays?: number;
+        riskLevel?: string;
+    };
 
 type ReportButtonProps = {
     result: ReportResult;
     scanMeta: ScanMeta;
 };
-export default function ReportButton({ result, scanMeta } : ReportButtonProps) {
+export default function ReportButton({ result, scanMeta }: ReportButtonProps) {
+
     function generateReport() {
-        const { prediction, confidence, riskLevel, reasons = [], extractedText, urls = [] } = result
-        const { type, input, timestamp } = scanMeta
+        const pdf = new jsPDF();
+        let y = 20;
 
-        const lines = [
-            '════════════════════════════════════════════════════',
-            '         Mildy AI – SCAN REPORT',
-            '════════════════════════════════════════════════════',
-            '',
-            `Timestamp   : ${new Date(timestamp).toLocaleString()}`,
-            `Input Type  : ${type}`,
-            `Prediction  : ${prediction?.toUpperCase()}`,
-            `Confidence  : ${confidence || 0}%`,
-            `Risk Level  : ${riskLevel}`,
-            '',
-            '── Detection Indicators ──────────────────────────',
-            reasons.length ? reasons.map(r => `  • ${r}`).join('\n') : '  None detected',
-            '',
-        ]
+        const addLine = (text: string, spacing = 8) => {
+            pdf.text(text, 20, y);
+            y += spacing;
+        };
 
-        if (urls.length) {
-            lines.push('── Detected URLs ─────────────────────────────────')
-            urls.forEach(u => lines.push(`  ⚠ ${u}`))
-            lines.push('')
+        pdf.setFontSize(18);
+        addLine("Mildy AI - Scan Report", 12);
+
+        pdf.setFontSize(11);
+        addLine(`Generated: ${new Date(scanMeta.timestamp).toLocaleString()}`);
+        addLine(`Report Type: ${scanMeta.type}`);
+        y += 5;
+
+        // const lines = [
+        //     '════════════════════════════════════════════════════',
+        //     '         Mildy AI – SCAN REPORT',
+        //     '════════════════════════════════════════════════════',
+        //     '',
+        //     `Timestamp   : ${new Date(timestamp).toLocaleString()}`,
+        //     `Input Type  : ${type}`,
+        //     '',
+        // ];
+        if (result.type === "domain-age") {
+            addLine("DOMAIN INFORMATION");
+            addLine(`Domain: ${result.domain}`);
+            addLine(`Website created at: ${result.createdDate ?? "Unknown"}`);
+            addLine(`Age: ${result.ageDays ?? "Unknown"} days`);
+            addLine(`Risk Level: ${result.riskLevel ?? "Unknown"}`);
         }
 
-        if (extractedText) {
-            lines.push('── OCR Extracted Text ────────────────────────────')
-            lines.push(extractedText)
-            lines.push('')
+        if (
+            result.type === "text" ||
+            result.type === "image"
+        ) {
+            const {
+                prediction,
+                confidence,
+                riskLevel,
+                reasons = [],
+                extractedText,
+                urls = [],
+            } = result;
+            console.log(result);
+            addLine(`Prediction: ${prediction?.toUpperCase()}`);
+            addLine(`Confidence: ${confidence ?? 0}%`);
+            addLine(`Risk Level: ${riskLevel}`);
+
+            y += 5;
+
+            addLine("Detection Indicators");
+
+            if (reasons.length) {
+                reasons.forEach(reason => {
+                    addLine(`• ${reason}`);
+                });
+            } else {
+                addLine("None detected");
+            }
+
+            y += 5;
+
+            if (urls.length) {
+                addLine("Detected URLs");
+                urls.forEach(url => {
+                    const wrappedUrl = pdf.splitTextToSize(url, 160);
+                    pdf.text(wrappedUrl, 25, y);
+                    y += wrappedUrl.length * 6;
+                });
+
+                y += 5;
+            }
+
+            if (extractedText) {
+                addLine("OCR Extracted Text");
+                const wrappedText = pdf.splitTextToSize(extractedText, 170);
+                pdf.text(wrappedText, 20, y);
+                y += wrappedText.length * 6 + 10;
+            }
+
+            if (
+                scanMeta.input &&
+                scanMeta.type === "text"
+            ) {
+                addLine("Scanned Content");
+
+                const wrappedInput =
+                    pdf.splitTextToSize(
+                        scanMeta.input,
+                        170
+                    );
+
+                pdf.text(wrappedInput, 20, y);
+
+                y += wrappedInput.length * 6 + 10;
+            }
         }
 
-        if (input && type === 'text') {
-            lines.push('── Scanned Content ───────────────────────────────')
-            lines.push(input.slice(0, 500) + (input.length > 500 ? '...' : ''))
-            lines.push('')
-        }
+        // footer
+        y += 10;
 
-        lines.push('════════════════════════════════════════════════════')
-        lines.push('Generated by Mildy AI · For educational use only')
-
-        const blob = new Blob([lines.join('\n')], { type: 'text/plain' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `mildy-report-${Date.now()}.txt`
-        a.click()
-        URL.revokeObjectURL(url)
+        pdf.setFontSize(9);
+        pdf.text("Generated by Mildy AI · For educational use only", 20, y);
+        pdf.save(`mildy-report-${Date.now()}.pdf`);
     }
 
     return (

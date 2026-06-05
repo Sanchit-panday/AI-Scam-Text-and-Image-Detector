@@ -152,13 +152,13 @@ export default function Home() {
                 <div key={item.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-700/20 transition-colors">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <PredictionBadge prediction={item.prediction} />
+                      <PredictionBadge prediction={"prediction" in item ? item.prediction : undefined} />
                       <span className="text-xs text-slate-500 capitalize">{item.type} scan</span>
                     </div>
                     <p className="text-xs text-slate-500 truncate">{new Date(item.timestamp).toLocaleString()}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-semibold text-white tabular-nums">{item.confidence || 0}%</p>
+                    <p className="text-sm font-semibold text-white tabular-nums">{'confidence' in item ? item.confidence : 0}%</p>
                     <p className="text-xs text-slate-500">confidence</p>
                   </div>
                 </div>

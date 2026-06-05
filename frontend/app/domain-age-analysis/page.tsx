@@ -3,14 +3,14 @@ import ErrorAlert from "@/components/Error"
 import LoadingSpinner from "@/components/LoadingSpinner"
 import DomainResultCard from "@/components/ResultCards/DomainResultCard"
 import { AlertCircle, FileText, Send, X } from "lucide-react"
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { getDomainAge } from "./getDomainAge"
 import { DomainAgeResult, ScanMeta } from "@/types/types"
 import { useScanStore } from "@/context/ScanContext"
 
 function page() {
-    const MAX_URL_LENGTH = 253;
+    const MAX_URL_LENGTH = 1000;
     const PLACEHOLDER_EXAMPLES = [
         'paste an url',
     ]
@@ -42,21 +42,18 @@ function page() {
 
             const data = await getDomainAge(url);
 
-            const meta: ScanMeta = { type: 'text', input: url, timestamp: new Date().toISOString() }
-            // console.log(data)
             setResult(data);
+
+            const meta: ScanMeta = { type: 'domain-age', input: url, timestamp: new Date().toISOString() }
             setScanMeta(meta);
-
-            // addScan({
-            //     type: "text",
-            //     prediction: data.prediction,
-            //     confidence: data.confidence,
-            //     riskLevel: data.risk,
-            //     message,
-            //     urls: data.urls ?? [],
-            //     indicators: data.indicators ?? [],
-            // });
-
+            // ! important to use data , not result ! do not change
+            addScan({
+                type: "domain-age",
+                url: data.domain ?? "undefined",
+                createdAt: data.created_date ?? "undefined",
+                age: data.age_days ?? "undefined",
+                riskLevel: data.riskLevel
+            });
         } catch (err) {
             setError(
                 err instanceof Error
@@ -122,19 +119,19 @@ function page() {
                         {/* Char count */}
                         <p
                             id="char-count-hint"
-                            className={`text-xs tabular-nums ${(isOverLimit) ? 'text-red-400' : (remaining) < 200 ? 'text-amber-400' : 'text-slate-500'}`}
+                            className={`text-xs tabular-nums ${(isOverLimit) ? 'text-red-400' : (url.length / MAX_URL_LENGTH) > 0.7 ? 'text-amber-400' : 'text-slate-500'}`}
                         >
                             {url.length.toLocaleString()} / {MAX_URL_LENGTH.toLocaleString()} characters
                             {isOverLimit && ` (${Math.abs(remaining)} over limit)`}
                         </p>
 
                         <div className="flex items-center gap-2">
-                            {url.length > 0 && (
+                            {(url.length > 0 || result || error) && (
                                 <button
                                     onClick={clearForm}
-                                    className="button-ghost text-sm py-2 px-3"
+                                    className="button-ghost text-sm py-2 px-3 bg-gray-500/20"
                                     disabled={loading}
-                                    aria-label="Clear text"
+                                    aria-label="Clear url"
                                 >
                                     <X size={15} aria-hidden /> Clear
                                 </button>
@@ -142,7 +139,7 @@ function page() {
 
                             {/* submit button */}
                             <button
-                                onClick={() => analyzeDomainAge}
+                                onClick={() => analyzeDomainAge(url)}
                                 disabled={loading || !!error}
                                 className="button-primary"
                                 aria-label="Analyze url"

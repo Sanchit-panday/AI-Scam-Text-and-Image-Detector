@@ -1,4 +1,5 @@
 namespace PhishingDetector.API.Models;
+
 using System.Text.Json.Serialization;
 
 public class ImagePredictionResponse
@@ -17,8 +18,7 @@ public class ImagePredictionResponse
 
     [JsonPropertyName("urls")]
     public List<string> URLs { get; set; } = [];
-    
+
     [JsonPropertyName("extractedText")]
     public string ExtractedText { get; set; } = "";
-    
 }

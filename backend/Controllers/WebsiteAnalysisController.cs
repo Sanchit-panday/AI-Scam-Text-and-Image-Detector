@@ -47,7 +47,7 @@ public class WebsiteAnalysisController : ControllerBase
 
         string host = uri.IdnHost.ToLowerInvariant();
 
-        if (host.Length > 253)
+        if (host.Length > 255)
         {
             return BadRequest(new { error = "Domain too long" });
         }
