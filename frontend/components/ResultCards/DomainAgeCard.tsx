@@ -22,7 +22,7 @@ const RISK_CONFIG = {
     High: { color: 'bg-red-500', text: 'text-red-300', badge: 'bg-red-900/60 text-red-300' },
 }
 
-export default function DomainResultCard({ domainAgeResult, scanMeta }: { domainAgeResult: DomainAgeResult, scanMeta: ScanMeta }) {
+export default function DomainAgeCard({ domainAgeResult, scanMeta }: { domainAgeResult: DomainAgeResult, scanMeta: ScanMeta }) {
 
     const domain = domainAgeResult.domain;
     const domain_date = domainAgeResult.created_date || null;
@@ -34,43 +34,41 @@ export default function DomainResultCard({ domainAgeResult, scanMeta }: { domain
     var cfg = PREDICTION_CONFIG.unknown;
     var pct = 50
 
-    if (domainAgeResult.error == null) {
-        if (domain_age != null) {
-            cfg = PREDICTION_CONFIG.safe;
-            riskCfg = RISK_CONFIG.Low;
+    if ((domainAgeResult.error == null) && domain_age != null) {
+        cfg = PREDICTION_CONFIG.safe;
+        riskCfg = RISK_CONFIG.Low;
 
-            if (domain_age < 180) {
-                cfg = PREDICTION_CONFIG.suspicious;
-                riskCfg = RISK_CONFIG.High;
-            } else if (domain_age < 365) {
-                cfg = PREDICTION_CONFIG.spam;
-                riskCfg = RISK_CONFIG.Medium;
-            }
+        if (domain_age < 180) {
+            cfg = PREDICTION_CONFIG.suspicious;
+            riskCfg = RISK_CONFIG.High;
+        } else if (domain_age < 365) {
+            cfg = PREDICTION_CONFIG.spam;
+            riskCfg = RISK_CONFIG.Medium;
+        }
 
-            if (domain_age < 14) {
-                // critical risk
-                pct = 95
-            }
-            else if (domain_age < 90) {
-                // very high risk
-                pct = 75
-            }
-            else if (domain_age < 180) {
-                // high risk
-                pct = 65
-            }
-            else if (domain_age < 365) {
-                // medium risk
-                pct = 50
-            }
-            else if (domain_age < 1095) {
-                // low risk
-                pct = 25;
-            }
-            else {
-                // very low risk
-                pct = 10;
-            }
+        if (domain_age < 14) {
+            // critical risk
+            pct = 95
+        }
+        else if (domain_age < 90) {
+            // very high risk
+            pct = 75
+        }
+        else if (domain_age < 180) {
+            // high risk
+            pct = 65
+        }
+        else if (domain_age < 365) {
+            // medium risk
+            pct = 50
+        }
+        else if (domain_age < 1095) {
+            // low risk
+            pct = 25;
+        }
+        else {
+            // very low risk
+            pct = 10;
         }
     }
     const Icon = cfg.icon;

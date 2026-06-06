@@ -5,3 +5,4 @@ joblib==1.4.2
 pillow==11.0.0
 pytesseract==0.3.13
 requests==2.32.3
+dnspython==2.8.0

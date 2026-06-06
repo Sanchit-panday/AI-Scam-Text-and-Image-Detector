@@ -1,9 +1,9 @@
 "use client"
 import ErrorAlert from "@/components/Error"
 import LoadingSpinner from "@/components/LoadingSpinner"
-import DomainResultCard from "@/components/ResultCards/DomainResultCard"
+import DomainAgeCard from "@/components/ResultCards/DomainAgeCard"
 import { AlertCircle, FileText, Send, X } from "lucide-react"
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { getDomainAge } from "./getDomainAge"
 import { DomainAgeResult, ScanMeta } from "@/types/types"
@@ -88,7 +88,7 @@ function page() {
             <div className="space-y-6 max-w-3xl">
                 <div className="flex items-center gap-3 mb-1">
                     <FileText size={22} className="text-brand-400" aria-hidden />
-                    <h1 className="text-2xl font-bold text-white">URL Analysis</h1>
+                    <h1 className="text-2xl font-bold text-white">Wesbite Age Checker</h1>
                 </div>
                 <p className="text-slate-400 text-sm">Paste any suspicious URL and we will check it for you.</p>
 
@@ -174,7 +174,7 @@ function page() {
 
                 {/* Result */}
                 {result && scanMeta && !loading && (
-                    <DomainResultCard domainAgeResult={result}
+                    <DomainAgeCard domainAgeResult={result}
                         scanMeta={scanMeta}
                     />
                 )}

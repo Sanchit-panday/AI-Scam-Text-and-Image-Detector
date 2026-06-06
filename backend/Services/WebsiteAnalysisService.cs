@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 public class WebsiteAnalysisService
 {
-    public async Task<DomainAgeResultDto> AnalyzeDomainAsync(string url)
+    public async Task<DnsLookupResponseDto> AnalyzeDomainAsync(string analysisType, string domain)
     {
         var process = new Process();
         string pythonExe = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
@@ -19,19 +19,17 @@ public class WebsiteAnalysisService
             Directory.GetCurrentDirectory(),
             "Phishing-Model",
             "website-analysis",
-            "domain-age.py"
+            // "domain-age.py"
+            "domain_analyzer.py"
         );
         process.StartInfo = new ProcessStartInfo
         {
             FileName = pythonExe,
-            Arguments = $"\"{scriptPath}\" \"{url}\"",
+            Arguments = $"\"{scriptPath}\" \"{analysisType}\" \"{domain}\"",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
         };
-
-        // using var process =
-        //     Process.Start(startInfo);
 
         process.Start();
 
@@ -46,6 +44,6 @@ public class WebsiteAnalysisService
             throw new Exception(error);
         }
 
-        return JsonSerializer.Deserialize<DomainAgeResultDto>(output)!;
+        return JsonSerializer.Deserialize<DnsLookupResponseDto>(output)!;
     }
 }

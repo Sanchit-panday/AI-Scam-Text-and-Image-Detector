@@ -1,10 +1,9 @@
-export async function getDomainAge(url: string) {
+export async function getDnsLookup(url: string) {
 
-    const BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
 
     const response = await fetch(
-        `${BASE_URL}/api/website/domain-age`,
+        `${BASE_URL}/api/website/dns_lookup`,
         {
             method: "POST",
             headers: {
@@ -16,6 +15,7 @@ export async function getDomainAge(url: string) {
         }
     );
 
+    console.log(response.status)
     if (!response.ok) {
 
         if (response.status === 429) {

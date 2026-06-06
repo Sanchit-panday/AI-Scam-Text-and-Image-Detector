@@ -21,8 +21,11 @@ public class WebsiteAnalysisController : ControllerBase
         _domainParser = domainParser;
     }
 
-    [HttpPost("domain-age")]
-    public async Task<IActionResult> Analyze([FromBody] WebsiteAnalysisRequestDto request)
+    [HttpPost("{analysisType}")]
+    public async Task<IActionResult> Analyze(
+        string analysisType,
+        [FromBody] WebsiteAnalysisRequestDto request
+    )
     {
         var url = request.Url?.Trim();
 
@@ -91,7 +94,14 @@ public class WebsiteAnalysisController : ControllerBase
             return BadRequest(new { error = "Domain does not exist" });
         }
 
-        var result = await _service.AnalyzeDomainAsync(domain);
+        var allowedTypes = new[] { "domain_age", "dns_lookup" };
+
+        if (!allowedTypes.Contains(analysisType, StringComparer.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { error = "Unsupported analysis type" });
+        }
+
+        var result = await _service.AnalyzeDomainAsync(analysisType, domain);
 
         return Ok(result);
     }

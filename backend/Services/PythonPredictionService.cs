@@ -1,26 +1,24 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using PhishingDetector.API.Models;
-using System.Runtime.InteropServices;
 
 namespace PhishingDetector.API.Services;
-
 
 public class PythonPredictionService
 {
     public async Task<PredictionResponse?> PredictAsync(string message)
     {
         var process = new Process();
-        string pythonExe =
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? "python"
-                : "python3";
+        string pythonExe = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "python"
+            : "python3";
 
         var scriptPath = Path.Combine(
             Directory.GetCurrentDirectory(),
-                "Phishing-Model",
-                "predict.py"
-            );
+            "Phishing-Model",
+            "predict.py"
+        );
         process.StartInfo = new ProcessStartInfo
         {
             FileName = pythonExe,
@@ -30,7 +28,7 @@ public class PythonPredictionService
             RedirectStandardError = true,
 
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
         };
 
         process.Start();
@@ -43,23 +41,18 @@ public class PythonPredictionService
 
         if (process.ExitCode != 0)
         {
-            throw new Exception(
-                string.IsNullOrWhiteSpace(error)
-                    ? "Python process failed"
-                    : error
-            );
+            throw new Exception(string.IsNullOrWhiteSpace(error) ? "Python process failed" : error);
         }
 
         return JsonSerializer.Deserialize<PredictionResponse>(output);
     }
-    public async Task<ImagePredictionResponse> AnalyzeImageAsync(
-    string imagePath)
+
+    public async Task<ImagePredictionResponse> AnalyzeImageAsync(string imagePath)
     {
         var process = new Process();
-        string pythonExe =
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? "python"
-                : "python3";
+        string pythonExe = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "python"
+            : "python3";
 
         var scriptPath = Path.Combine(
             Directory.GetCurrentDirectory(),
@@ -76,7 +69,7 @@ public class PythonPredictionService
             RedirectStandardError = true,
 
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
         };
 
         process.Start();
@@ -94,18 +87,13 @@ public class PythonPredictionService
 
         if (process.ExitCode != 0)
         {
-            throw new Exception(
-            string.IsNullOrWhiteSpace(error)
-                ? "Python process failed"
-                : error
-            );
+            throw new Exception(string.IsNullOrWhiteSpace(error) ? "Python process failed" : error);
         }
 
-        var result = JsonSerializer.Deserialize<ImagePredictionResponse>(output,
-        new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var result = JsonSerializer.Deserialize<ImagePredictionResponse>(
+            output,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+        );
 
         if (result == null)
         {
@@ -114,11 +102,7 @@ public class PythonPredictionService
 
         if (process.ExitCode != 0)
         {
-            throw new Exception(
-            result == null
-                ? "Failed to parse Python response."
-                : error
-            );
+            throw new Exception(result == null ? "Failed to parse Python response." : error);
         }
 
         return result;
