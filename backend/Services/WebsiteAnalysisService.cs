@@ -8,9 +8,10 @@ using System.Runtime.InteropServices;
 
 public class WebsiteAnalysisService
 {
-    public async Task<DnsLookupResponseDto> AnalyzeDomainAsync(string analysisType, string domain)
+    public async Task<string> RunPythonAnalysisAsync(string analysisType, string domain)
     {
         var process = new Process();
+
         string pythonExe = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "python"
             : "python3";
@@ -39,10 +40,34 @@ public class WebsiteAnalysisService
 
         await process.WaitForExitAsync();
 
+        if (!string.IsNullOrWhiteSpace(error))
+        {
+            Console.WriteLine($"Python stderr: {error}");
+        }
+
         if (process.ExitCode != 0)
         {
             throw new Exception(error);
         }
+        if (process.ExitCode != 0)
+        {
+            throw new Exception(output == null ? "Failed to parse Python response." : error);
+        }
+
+        // return JsonSerializer.Deserialize<DnsLookupResponseDto>(output)!;
+        return output;
+    }
+
+    public async Task<DomainAgeResponseDto> AnalyzeDomainAgeAsync(string domain)
+    {
+        var output = await RunPythonAnalysisAsync("domain_age", domain);
+
+        return JsonSerializer.Deserialize<DomainAgeResponseDto>(output)!;
+    }
+
+    public async Task<DnsLookupResponseDto> AnalyzeDnsLookupAsync(string domain)
+    {
+        var output = await RunPythonAnalysisAsync("dns_lookup", domain);
 
         return JsonSerializer.Deserialize<DnsLookupResponseDto>(output)!;
     }

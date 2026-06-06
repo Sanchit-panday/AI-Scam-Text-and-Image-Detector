@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace PhishingDetector.API.DTOs;
 
-public class DomainAgeResultDto
+public class DomainAgeResponseDto
 {
     [JsonPropertyName("domain")]
     public string Domain { get; set; } = string.Empty;

@@ -101,7 +101,14 @@ public class WebsiteAnalysisController : ControllerBase
             return BadRequest(new { error = "Unsupported analysis type" });
         }
 
-        var result = await _service.AnalyzeDomainAsync(analysisType, domain);
+        object result = analysisType switch
+        {
+            "domain_age" => await _service.AnalyzeDomainAgeAsync(domain),
+
+            "dns_lookup" => await _service.AnalyzeDnsLookupAsync(domain),
+
+            _ => throw new InvalidOperationException(),
+        };
 
         return Ok(result);
     }
