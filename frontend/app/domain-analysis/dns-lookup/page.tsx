@@ -40,7 +40,6 @@ export default function page() {
 
             setResult(data);
 
-            console.log(result);
             const meta: ScanMeta = { type: 'dns-lookup', input: url, timestamp: new Date().toISOString() }
             setScanMeta(meta);
             // // ! important to use data , not result ! do not change

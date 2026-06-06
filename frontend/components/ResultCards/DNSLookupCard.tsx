@@ -16,15 +16,6 @@ import ReportButton from '../ReportButton';
 import type { DnsLookupResult, ScanMeta } from "@/types/types"
 import { cn } from '@/lib/utils';
 
-const PREDICTION_CONFIG = {
-    safe: { label: 'Safe', icon: ShieldCheck, bg: 'bg-emerald-900/40', border: 'border-emerald-700/40', text: 'text-emerald-300', badge: 'bg-emerald-900/60 text-emerald-300' },
-    suspicious: { label: 'Suspicious', icon: AlertTriangle, bg: 'bg-amber-900/40', border: 'border-amber-700/40', text: 'text-amber-300', badge: 'bg-amber-900/60 text-amber-300' },
-    spam: { label: 'Spam', icon: ShieldX, bg: 'bg-red-900/40', border: 'border-red-700/40', text: 'text-red-300', badge: 'bg-red-900/60 text-red-300' },
-    scam: { label: 'Scam', icon: ShieldX, bg: 'bg-red-900/40', border: 'border-red-700/40', text: 'text-red-300', badge: 'bg-red-900/60 text-red-300' },
-    phishing: { label: 'Phishing', icon: ShieldAlert, bg: 'bg-rose-900/40', border: 'border-rose-700/40', text: 'text-rose-300', badge: 'bg-rose-900/60 text-rose-300' },
-    unknown: { label: 'Unknown', icon: ShieldQuestionMark, bg: 'bg-gray-900/40', border: 'border-gray-700/40', text: 'text-gray-300', badge: 'bg-gray-900/60 text-gray-300' },
-}
-
 const RISK_CONFIG = {
     Low: { color: 'bg-emerald-500', text: 'text-emerald-300', badge: 'bg-emerald-900/60 text-emerald-300' },
     Medium: { color: 'bg-amber-500', text: 'text-amber-300', badge: 'bg-amber-900/60 text-amber-300' },
@@ -54,7 +45,6 @@ export default function DnsLookupCard({ DnsLookupResult, scanMeta }: { DnsLookup
     const text = ["appears legitimate but has a few security configuration issues that should be reviewed."]
 
     var riskCfg = RISK_CONFIG.Low;
-    var cfg = PREDICTION_CONFIG.unknown;
 
     if (DnsLookupResult.error != null) {
         switch (riskLevel) {
@@ -75,8 +65,6 @@ export default function DnsLookupCard({ DnsLookupResult, scanMeta }: { DnsLookup
                 break;
         }
     }
-    console.log(riskCfg)
-    const Icon = cfg.icon;
 
     type DnsCheck = {
         label: string;
@@ -145,7 +133,7 @@ export default function DnsLookupCard({ DnsLookupResult, scanMeta }: { DnsLookup
         <>
             <section
                 aria-label="Analysis result"
-                className={`glass-card border-2 p-6 space-y-5 transition-all ${cfg.bg} ${cfg.border}`}
+                className={`glass-card border-2 p-6 space-y-5 transition-all`}
             >
                 {/* Header */}
                 <div className='flex flex-col'>
