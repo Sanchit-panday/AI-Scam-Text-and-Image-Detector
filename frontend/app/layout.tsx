@@ -13,10 +13,10 @@ import {
 } from "@/context/CookieContext";
 import CookieBanner from "@/components/cookies/CookieBanner";
 import CookieSettingsModal from "@/components/cookies/CookieSettingsModal";
-import Navbar from '@/components/ui/Navbar';
+import Navbar from '@/components/cutsom-ui/Navbar';
 import { ScanProvider } from '@/context/ScanContext';
 import { caveat, inter, playfairDisplaySC } from "@/components/Fonts";
-import Footer from '@/components/ui/Footer';
+import Footer from '@/components/cutsom-ui/Footer';
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
