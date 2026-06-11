@@ -271,3 +271,74 @@ body {
     @apply font-sans;
   }
 }
+.bg-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.06) 0%,
+    transparent 70%
+  );
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.chip-button {
+  align-items: center;
+  appearance: none;
+  background-color: #111827;
+  border-radius: 8px;
+  border-width: 2px;
+  border-color: #4355bd;
+  box-shadow:
+    rgba(83, 109, 254, 0.2) 0 2px 4px,
+    rgba(83, 109, 254, 0.15) 0 7px 13px -3px,
+    #111827 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #f3f4f6;
+  cursor: pointer;
+  /* display: inline-flex; */
+  font-family: "JetBrains Mono", monospace;
+  /* height: 56px; */
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding: 12px;
+  padding-right: 12px;
+  position: relative;
+  text-align: center;
+  transition:
+    box-shadow 0.15s,
+    transform 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow, transform;
+}
+
+.chip-button:focus {
+  outline: none;
+  box-shadow:
+    #111827 0 0 0 1.5px inset,
+    rgba(83, 109, 254, 0.4) 0 2px 4px,
+    rgba(83, 109, 254, 0.3) 0 7px 13px -3px,
+    #111827 0 -3px 0 inset;
+}
+
+.chip-button:hover {
+  box-shadow:
+    rgba(83, 109, 254, 0.3) 0 4px 8px,
+    rgba(83, 109, 254, 0.2) 0 7px 13px -3px,
+    #111827 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.chip-button:active {
+  box-shadow: #111827 0 3px 7px inset;
+  transform: translateY(2px);
+}

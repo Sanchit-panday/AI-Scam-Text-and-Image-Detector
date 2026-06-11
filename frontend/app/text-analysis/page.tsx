@@ -4,8 +4,9 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ResultCard from "@/components/ResultCard";
 import { useScanStore } from "@/context/ScanContext";
 import { AlertCircle, FileText, Loader, Send, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ScanMeta } from "@/types/types"
+import { getTextAnalysis } from "./getTextAnalysis";
 
 export default function TextAnalysisPage() {
     const MAX_MESSAGE_LENGTH = 5000;
@@ -15,11 +16,11 @@ export default function TextAnalysisPage() {
 
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
+    const { pendingQuery, setPendingQuery } = useScanStore();
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState<any>(null);
     const [scanMeta, setScanMeta] = useState<ScanMeta | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
 
     const remaining = MAX_MESSAGE_LENGTH - message.length
     const isOverLimit = message.length > MAX_MESSAGE_LENGTH
@@ -38,42 +39,10 @@ export default function TextAnalysisPage() {
             setResult(null);
             setError(null);
 
-            // environment Variables
-            const BASE_URL =
-                process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
-
-            const response = await fetch(
-                `${BASE_URL}/api/phishing/check`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        message,
-                    }),
-                }
-            );
-
-            if (!response.ok) {
-
-                if (response.status === 429) {
-                    throw new Error(
-                        "Too many requests. Please wait a minute and try again."
-                    );
-                }
-
-                const errorData = await response.json();
-
-                throw new Error(
-                    errorData.error || "Server error"
-                );
-            }
-
-            const data = await response.json();
-            const meta: ScanMeta = { type: 'text', input: message, timestamp: new Date().toISOString() }
-
+            const data = await getTextAnalysis(message);
             setResult(data);
+
+            const meta: ScanMeta = { type: 'text', input: message, timestamp: new Date().toISOString() }
             setScanMeta(meta)
 
             // save to localStorage
@@ -102,6 +71,7 @@ export default function TextAnalysisPage() {
         setResult(null);
         setError(null);
         setScanMeta(null)
+        setPendingQuery("");
         textareaRef.current?.focus()
     };
 
@@ -113,6 +83,12 @@ export default function TextAnalysisPage() {
             analyzeMessage();
         }
     }
+    useEffect(() => {
+        if (pendingQuery) {
+            setMessage(pendingQuery);
+            setPendingQuery("");
+        }
+    }, [pendingQuery]);
     return (
         <>
             {/* data form */}

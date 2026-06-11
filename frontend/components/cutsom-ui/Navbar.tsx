@@ -43,7 +43,7 @@ function Navbar() {
     return (
         <>
             <header className="sticky top-0 z-40 border-x-0 border-t-0">
-                <span className='grid grid-cols-3 z-40 glass-card rounded-none px-4 md:px-6 h-16 items-center'>
+                <span className='grid md:grid-cols-3 grid-cols-2 z-40 glass-card rounded-none px-4 md:px-6 h-16 items-center'>
                     <a href="/">
                         <div className="flex items-center justify-start gap-3">
                             <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-900/50">
@@ -57,7 +57,7 @@ function Navbar() {
                             </span>
                         </div>
                     </a>
-                    <div className='h-full flex justify-center items-center'>
+                    <div className='h-full hidden md:flex justify-center items-center'>
                         <div className='flex gap-x-4 text-sm text-gray-400 items-center'>
                             {centerMenuItems.map((item) => (
                                 <button
@@ -81,7 +81,6 @@ function Navbar() {
 
                     {/* Desktop nav */}
                     <div className="hidden md:flex items-center justify-end gap-1 text-gray-400" aria-label="Main navigation">
-                        {/* <div className='p-2 rounded-full navbar-items-animate'><Settings size={20} /></div> */}
                         <a href='/scan-history' className='p-2 rounded-full navbar-items-animate'><History size={20} /></a>
                         {/* {navItems.map(({ to, key, label, icon: Icon }) => (
                         <Link
@@ -101,7 +100,7 @@ function Navbar() {
 
                     {/* Mobile menu toggle */}
                     <button
-                        className="md:hidden btn-ghost p-2"
+                        className="md:hidden btn-ghost p-2 flex justify-end"
                         onClick={() => setMobileOpen(v => !v)}
                         aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                     >

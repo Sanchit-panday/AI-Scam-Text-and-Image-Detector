@@ -1,16 +1,16 @@
-export async function getDnsLookup(url: string) {
+export async function getTextAnalysis(message: string) {
 
     const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5298";
 
     const response = await fetch(
-        `${BASE_URL}/api/website/dns_lookup`,
+        `${BASE_URL}/api/phishing/check`,
         {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                url,
+                message,
             }),
         }
     );
@@ -29,6 +29,5 @@ export async function getDnsLookup(url: string) {
             errorData.error || "Server error"
         );
     }
-
     return response.json();
 }

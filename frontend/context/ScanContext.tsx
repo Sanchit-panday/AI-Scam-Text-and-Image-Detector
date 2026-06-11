@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useContext, useReducer, useCallback, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useReducer, useCallback, useEffect, ReactNode, useState } from 'react'
 
 const HISTORY_KEY = 'mildyAI_history'
 const MAX_HISTORY = 100
@@ -99,7 +99,11 @@ type ScanContextType = {
     addScan: (payload: NewScan) => void;
 
     deleteScan: (id: string) => void;
+
     clearHistory: () => void;
+
+    pendingQuery: string;
+    setPendingQuery: (text: string) => void;
 
     metrics: {
         total: number;
@@ -208,6 +212,7 @@ export function ScanProvider({
             scan.type === "domain-age"
     );
     const totalAnalysisScans = TextScans.length + ImageScans.length;
+    const [pendingQuery, setPendingQuery] = useState("");
     const metrics = {
         total: state.history.length,
 
@@ -236,7 +241,7 @@ export function ScanProvider({
     }, []);
 
     return (
-        <ScanContext.Provider value={{ history: state.history, addScan, deleteScan, clearHistory, metrics }}>
+        <ScanContext.Provider value={{ pendingQuery, setPendingQuery, history: state.history, addScan, deleteScan, clearHistory, metrics }}>
             {children}
         </ScanContext.Provider>
     )

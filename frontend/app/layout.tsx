@@ -30,7 +30,8 @@ export default function layout({
 }) {
     return (
         <html lang="en"
-            suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+            suppressHydrationWarning className={cn("font-sans", geist.variable)}
+            >
             <body className={inter.className}>
                 <ThemeProvider>
                     <div className="min-h-screen flex flex-col">
