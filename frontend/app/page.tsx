@@ -162,7 +162,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-y-8 max-w-3xl" >
+          <div className="hidden sm:flex flex-col items-center gap-y-8 max-w-3xl" >
             <p className="text-muted-foreground">Try an example</p>
             <div className="text-sm flex flex-wrap justify-center gap-x-3 gap-y-3" >
               {chipData.map((item) => (
@@ -172,7 +172,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* quick Actions */}
+        {/* quick actions */}
         <StatsAndQuickActions />
 
         {/* About Mildy AI */}

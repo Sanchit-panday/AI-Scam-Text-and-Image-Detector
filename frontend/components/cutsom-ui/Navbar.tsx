@@ -35,9 +35,9 @@ function Navbar() {
         }, 100);
     };
     const centerMenuItems = [
-        { id: 'services', label: 'Services' },
-        { id: 'models', label: 'Models' },
-        { id: 'resources', label: 'Resources' },
+        { id: 'services', label: 'Services', to: '/services' },
+        { id: 'models', label: 'Models', to: '/models' },
+        { id: 'resources', label: 'Resources', to: '/resources' },
     ];
 
     return (
@@ -60,21 +60,24 @@ function Navbar() {
                     <div className='h-full hidden md:flex justify-center items-center'>
                         <div className='flex gap-x-4 text-sm text-gray-400 items-center'>
                             {centerMenuItems.map((item) => (
-                                <button
+                                <a href={item.to}
                                     key={item.id}
-                                    onMouseEnter={() => {
-                                        navHoveredRef.current = true;
-                                        setIsDropdownPanel(true);
-                                        setPanelContent(item.id)
-                                    }}
-                                    onMouseLeave={() => {
-                                        navHoveredRef.current = false;
-                                        scheduleClose();
-                                    }}
-                                    className="flex items-center gap-1 px-3 py-1 rounded-xl navbar-items-animate navbar-middle-items-animate"
                                 >
-                                    {item.label} <ChevronsUpDown size={15} />
-                                </button>
+                                    <button
+                                        onMouseEnter={() => {
+                                            navHoveredRef.current = true;
+                                            setIsDropdownPanel(true);
+                                            setPanelContent(item.id)
+                                        }}
+                                        onMouseLeave={() => {
+                                            navHoveredRef.current = false;
+                                            scheduleClose();
+                                        }}
+                                        className="flex items-center gap-1 px-3 py-1 rounded-xl navbar-items-animate navbar-middle-items-animate"
+                                    >
+                                        {item.label} <ChevronsUpDown size={15} />
+                                    </button>
+                                </a>
                             ))}
                         </div>
                     </div>
