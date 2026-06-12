@@ -2,9 +2,9 @@
 
 An AI-powered phishing and scam detection platform that analyzes both text messages and screenshots to identify potential scams, phishing attempts, and suspicious content using Machine Learning and OCR.
 
-🔗 **Live Demo:** [MildyAI.com](https://ai-scam-text-and-image-detector.vercel.app/)
+🔗 **Live Demo:** [MildyAI.com](https://mildyai.vercel.app/)
 
-🔗 **GitHub Repository:** [Github Link](https://github.com/Sanchit-panday/AI-Scam-Text-and-Image-Detector)
+🔗 **GitHub Repository:** [Github Link](https://github.com/Sanchit-panday/Mildy-AI)
 
 ---
 

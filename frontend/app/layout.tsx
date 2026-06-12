@@ -1,8 +1,42 @@
 // "use client"
 import type { Metadata } from 'next'
+import { Analytics } from "@vercel/analytics/next"
 export const metadata: Metadata = {
-    title: 'AI Scam Detector',
-    description: 'Detect and prevent scams using AI technology',
+    title: 'Mildy AI | AI Scam Detection & Security Intelligence',
+    description: 'Analyze websites, messages, images, DNS records, and domain information using AI-powered security tools. Detect scams, phishing attempts, and suspicious online activity with Mildy AI.',
+    keywords: [
+        "AI Scam Detector",
+        "Phishing Detection",
+        "Cyber Security",
+        "DNS Lookup",
+        "Domain Analysis",
+        "Website Security",
+        "Scam Detection",
+        "AI Security",
+        "URL Scanner",
+        "Image Analysis",
+        "Message Scanner",
+        "Mildy AI",
+    ],
+
+    authors: [{ name: "Sanchit" }],
+    creator: "Sanchit",
+    applicationName: "Mildy AI",
+
+    openGraph: {
+        title: "Mildy AI",
+        description:
+            "AI-powered scam detection and cybersecurity analysis platform.",
+        type: "website",
+        siteName: "Mildy AI",
+    },
+
+    twitter: {
+        card: "summary_large_image",
+        title: "Mildy AI",
+        description:
+            "Analyze websites, messages, images and domains using AI-powered security tools.",
+    },
 }
 import './globals.css'
 // import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -31,7 +65,7 @@ export default function layout({
     return (
         <html lang="en"
             suppressHydrationWarning className={cn("font-sans", geist.variable)}
-            >
+        >
             <body className={inter.className}>
                 <ThemeProvider>
                     <div className="min-h-screen flex flex-col">
