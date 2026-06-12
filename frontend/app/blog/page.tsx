@@ -155,7 +155,7 @@ function page() {
                         variants={itemVariants}
                         className="text-gray-400/90 text-lg max-w-170 mx-auto leading-relaxed"
                     >
-                        Lorem ipsum dolor sit amet consectetur. Id tortor dictum tellus euismod urna luctus fringilla amet nibh. Mattis egestas sagittis convallis.
+                        Product updates, launch posts and technical deep dives
                     </motion.p>
                 </motion.div>
             </section>

@@ -1,33 +1,5 @@
-import { Globe, Image, Link2, LucideIcon, MessageCircle, MousePointer2Off } from "lucide-react";
-type figProps = {
-    icon?: LucideIcon,
-    title?: string,
-    description?: string,
-    to?: string
-}
-function FigGen({ icon: Icon, title, description, to }: figProps) {
-    return (
-        <div className="border-border border relative group flex flex-col h-full lg:border-t-0">
-            <div className="hidden md:block absolute pointer-events-none inset-0 z-10 select-none" aria-hidden="true">
-                <div className="absolute bg-background -left-1.75 -top-1.75 w-3.5 h-3.5 rounded-[3px] border"></div>
-                <div className="absolute bg-background -left-1.75 -bottom-1.75 w-3.5 h-3.5 rounded-[3px] border"></div>
-                <div className="absolute bg-background -right-1.75 -top-1.75 w-3.5 h-3.5 rounded-[3px] border"></div>
-                <div className="absolute bg-background -right-1.75 -bottom-1.75 w-3.5 h-3.5 rounded-[3px] border"></div>
-            </div>
-            {title && to &&
-                <a href={to} className="flex flex-col p-6 lg:p-8">
-                    {Icon ?
-                        <Icon size={22} className="group-hover:text-accent transition-colors" />
-                        :
-                        <MousePointer2Off size={22} className="group-hover:text-accent transition-colors" />
-                    }
-                    <p className="pt-2 pb-1">{title}</p>
-                    <p className="text-secondary">{description}</p>
-                </a>
-            }
-        </div>
-    )
-}
+import { CreateTile } from "@/components/cutsom-ui/createTile";
+import { Globe, Image, Link2, MessageCircle } from "lucide-react";
 export default function page() {
     return (
         <>
@@ -39,16 +11,16 @@ export default function page() {
                 </div>
                 <div className="flex" aria-label="Product category filter"></div>
             </header>
-
+            {/* main content */}
             <section className="mx-auto w-full max-w-300 pt-8 md:pt-12 pb-24">
                 <div className="flex flex-col gap-12">
                     <figure className="m-0 w-full">
                         <figcaption className="ml-8 mb-4 text-secondary text-sm uppercase tracking-wide">AI SERVICES</figcaption>
                         <div className="border-border relative w-full border">
                             <div className="grid grid-cols-1 lg:grid-cols-3">
-                                <FigGen icon={Image} title="Image Scan" description="Scan Images" to="/image-analysis" />
-                                <FigGen icon={MessageCircle} title="Message Scan" description="Scan Messages" to="/text-analysis" />
-                                <FigGen title="" description="" />
+                                <CreateTile icon={Image} title="Image Scan" description="Scan Images." to="/image-analysis" />
+                                <CreateTile icon={MessageCircle} title="Message Scan" description="Scan Messages." to="/text-analysis" />
+                                <CreateTile title="" description="" />
                             </div>
                         </div>
                     </figure>
@@ -56,9 +28,9 @@ export default function page() {
                         <figcaption className="ml-8 mb-4 text-secondary text-sm uppercase tracking-wide">STANDALONE SERVICES</figcaption>
                         <div className="border-border relative w-full border ">
                             <div className="grid grid-cols-1 lg:grid-cols-3">
-                                <FigGen icon={Globe} title="Webpage Age" description="Webpage Age" to="/domain-analysis/domain-age" />
-                                <FigGen icon={Link2} title="DNS Lookup" description="DNS Lookup" to="/domain-analysis/dns-lookup" />
-                                <FigGen title="" description="" />
+                                <CreateTile icon={Globe} title="Webpage Age" description="Webpage Age." to="/domain-analysis/domain-age" />
+                                <CreateTile icon={Link2} title="DNS Lookup" description="DNS Lookup." to="/domain-analysis/dns-lookup" />
+                                <CreateTile title="" description="" />
                             </div>
                         </div>
                     </figure>

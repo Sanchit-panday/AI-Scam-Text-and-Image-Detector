@@ -166,8 +166,8 @@ function Navbar() {
                                 <div className='grid grid-cols-3 divide-x w-full justify-start items-start'>
                                     <div className='h-full w-[200] text-sm flex flex-col p-2 '>
                                         <a href="https://github.com/Sanchit-panday/AI-Scam-Text-and-Image-Detector" className='flex flex-col px-4 py-3 gap-3 hover:bg-slate-900/40 border border-transparent hover:border-slate-700 rounded-xl'>
-                                            <small>Mildy AI Documentation</small>
-                                            <small className='text-slate-400'>Mildy AI documentation</small>
+                                            <small>Github Documentation</small>
+                                            <small className='text-slate-400'>Github documentation</small>
                                         </a>
                                         <a href="https://github.com/Sanchit-panday/AI-Scam-Text-and-Image-Detector" className='flex flex-col px-4 py-3 gap-3 coming-soon'>
                                             <small className=''>Developer Docs</small>
