@@ -8,7 +8,7 @@ type figProps = {
 function FigGen({ icon: Icon, title, description, to }: figProps) {
     return (
         <div className="border-border border relative group flex flex-col h-full lg:border-t-0">
-            <div className="absolute pointer-events-none inset-0 z-10 select-none" aria-hidden="true">
+            <div className="hidden md:block absolute pointer-events-none inset-0 z-10 select-none" aria-hidden="true">
                 <div className="absolute bg-background -left-1.75 -top-1.75 w-3.5 h-3.5 rounded-[3px] border"></div>
                 <div className="absolute bg-background -left-1.75 -bottom-1.75 w-3.5 h-3.5 rounded-[3px] border"></div>
                 <div className="absolute bg-background -right-1.75 -top-1.75 w-3.5 h-3.5 rounded-[3px] border"></div>
@@ -40,23 +40,29 @@ export default function page() {
                 <div className="flex" aria-label="Product category filter"></div>
             </header>
 
-            <section className="max-w-300 p-8 md:pt-12 flex flex-col gap-12">
-                <figure className="w-full">
-                    <figcaption className="ml-8 mb-4 text-secondary text-sm">AI SERVICES</figcaption>
-                    <div className="border-border border grid grid-cols-3">
-                        <FigGen icon={Image} title="Image Scan" description="Scan Images" to="/image-analysis" />
-                        <FigGen icon={MessageCircle} title="Message Scan" description="Scan Messages" to="/text-analysis" />
-                        <FigGen title="" description="" />
-                    </div>
-                </figure>
-                <figure className="w-full">
-                    <figcaption className="ml-8 mb-4 text-secondary text-sm">STANDALONE SERVICES</figcaption>
-                    <div className="border-border border grid grid-cols-3">
-                        <FigGen icon={Globe} title="Webpage Age" description="Webpage Age" to="/domain-analysis/domain-age" />
-                        <FigGen icon={Link2} title="DNS Lookup" description="DNS Lookup" to="/domain-analysis/dns-lookup" />
-                        <FigGen title="" description="" />
-                    </div>
-                </figure>
+            <section className="mx-auto w-full max-w-300 pt-8 md:pt-12 pb-24">
+                <div className="flex flex-col gap-12">
+                    <figure className="m-0 w-full">
+                        <figcaption className="ml-8 mb-4 text-secondary text-sm uppercase tracking-wide">AI SERVICES</figcaption>
+                        <div className="border-border relative w-full border">
+                            <div className="grid grid-cols-1 lg:grid-cols-3">
+                                <FigGen icon={Image} title="Image Scan" description="Scan Images" to="/image-analysis" />
+                                <FigGen icon={MessageCircle} title="Message Scan" description="Scan Messages" to="/text-analysis" />
+                                <FigGen title="" description="" />
+                            </div>
+                        </div>
+                    </figure>
+                    <figure className="m-0 w-full">
+                        <figcaption className="ml-8 mb-4 text-secondary text-sm uppercase tracking-wide">STANDALONE SERVICES</figcaption>
+                        <div className="border-border relative w-full border ">
+                            <div className="grid grid-cols-1 lg:grid-cols-3">
+                                <FigGen icon={Globe} title="Webpage Age" description="Webpage Age" to="/domain-analysis/domain-age" />
+                                <FigGen icon={Link2} title="DNS Lookup" description="DNS Lookup" to="/domain-analysis/dns-lookup" />
+                                <FigGen title="" description="" />
+                            </div>
+                        </div>
+                    </figure>
+                </div>
             </section>
         </>
     )
