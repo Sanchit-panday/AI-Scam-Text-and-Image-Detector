@@ -16,7 +16,6 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Faq from "./dashboard/Faq";
 import StatsAndQuickActions from "./dashboard/StatsAndQuickActions";
-import HowMildyWorks from "./dashboard/HowMildyWorks";
 
 export default function Home() {
   const frameworks = [
@@ -174,10 +173,6 @@ export default function Home() {
 
         {/* quick actions */}
         <StatsAndQuickActions />
-
-        {/* About Mildy AI */}
-        {/* How it works */}
-        <HowMildyWorks />
 
         {/* About scams in India */}
         <div className="mb-15">

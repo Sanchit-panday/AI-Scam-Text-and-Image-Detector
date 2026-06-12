@@ -2,7 +2,7 @@
 import { saira } from '@/components/Fonts';
 import { useScanStore } from '@/context/ScanContext';
 import Link from 'next/link';
-import { FileText, History, LucideIcon, Percent, Shield, ShieldCheck, ShieldX, TrendingUp, Image, ChevronRight, Link2, Dot, ChartArea } from 'lucide-react'
+import { FileText, History, LucideIcon, Percent, Shield, ShieldCheck, ShieldX, TrendingUp, Image, ChevronRight, Link2, Dot, ChartArea, Shredder } from 'lucide-react'
 
 import { Doughnut } from 'react-chartjs-2';
 
@@ -100,32 +100,42 @@ export default function StatsAndQuickActions() {
         <>
             <div className='flex flex-col sm:grid grid-cols-[auto_1fr] gap-4'>
                 {/* Stats */}
-                <div className='bg-card rounded-xl p-4 border border-border' aria-label='threat overview'>
+                <div className='bg-card rounded-xl p-4 border border-border group' aria-label='threat overview'>
                     <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                         <TrendingUp size={18} className="text-brand-400" aria-hidden /><span className={saira.className}>Threat Overview</span>
                     </h2>
-                    <div className='flex gap-x-4 mb-4'>
-                        <div className='h-25'>
-                            <Doughnut
-                                data={data}
-                                options={options}
-                            />
-                        </div>
-                        <div className='flex flex-col justify-center'>
-                            <div className='grid grid-cols-2 justify-start items-start gap-x-5 gap-y-2'>
-                                <div className='flex items-center gap-x-2 font-light text-sm'><span className='inline-block w-2 h-2 bg-amber-300 rounded-full' />Scam</div>
-                                <div className='font-semibold'>{metrics.scam}</div>
-                                <div className='flex items-center gap-x-2 font-light text-sm'><span className='inline-block w-2 h-2 bg-green-500 rounded-full' />Safe</div>
-                                <div className='font-semibold'>{metrics.safe}</div>
+                    {metrics.total > 0 ?
+                        <>
+                            <div className='flex gap-x-4 mb-4'>
+                                <div className='h-25'>
+                                    <Doughnut
+                                        data={data}
+                                        options={options}
+                                    />
+                                </div>
+                                <div className='flex flex-col justify-center'>
+                                    <div className='grid grid-cols-2 justify-start items-start gap-x-5 gap-y-2'>
+                                        <div className='flex items-center gap-x-2 font-light text-sm'><span className='inline-block w-2 h-2 bg-amber-300 rounded-full' />Scam</div>
+                                        <div className='font-semibold'>{metrics.scam}</div>
+                                        <div className='flex items-center gap-x-2 font-light text-sm'><span className='inline-block w-2 h-2 bg-green-500 rounded-full' />Safe</div>
+                                        <div className='font-semibold'>{metrics.safe}</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <a href="/scan-history">
-                        <button className='text-sm p-2 w-full hover:bg-card-hover transition-all rounded-md border border-border flex justify-center items-center gap-x-2 group'>
-                            <ChartArea size={15} className='group-hover:text-accent group-hover:scale-120 transition-all' />
-                            View Full Analytics
-                        </button>
-                    </a>
+                            <a href="/scan-history">
+                                <button className='text-sm p-2 w-full hover:bg-card-hover transition-all rounded-md border border-border flex justify-center items-center gap-x-2 group'>
+                                    <ChartArea size={15} className='group-hover:text-accent group-hover:scale-120 transition-all' />
+                                    View Full Analytics
+                                </button>
+                            </a>
+                        </>
+                        :
+                        <>
+                            <div className='flex flex-col gap-y-2 justify-center items-center text-sm text-secondary p-2 mt-4'>
+                                <Shredder className='group-hover:text-accent transition-colors' />No history available
+                            </div>
+                        </>
+                    }
                     {/* <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <StatCard label="Total Scans" value={metrics.total} icon={Shield} color="bg-brand-600" />
                     <StatCard label="Safe" value={metrics.safe} icon={ShieldCheck} color="bg-emerald-700" />

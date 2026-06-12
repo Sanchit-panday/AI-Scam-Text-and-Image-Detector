@@ -6,7 +6,7 @@ export default function page() {
             {/* header */}
             <header className="flex min-h-70 md:min-h-90 justify-center items-center">
                 <div className="flex flex-col items-center gap-4 text-center">
-                    <h2 className="text-primary text-4xl font-semibold">MildyAI Services</h2>
+                    <h2 className="text-primary text-6xl font-semibold">MildyAI Services</h2>
                     <div>Services offered by MildyAI</div>
                 </div>
                 <div className="flex" aria-label="Product category filter"></div>
