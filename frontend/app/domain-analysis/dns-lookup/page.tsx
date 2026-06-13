@@ -82,7 +82,7 @@ export default function page() {
     return (
         <>
             {/* data form */}
-            <div className="space-y-6 max-w-3xl">
+            <div className="space-y-6 mt-6 max-w-3xl">
                 <div className="flex items-center gap-3 mb-1">
                     <FileText size={22} className="text-brand-400" aria-hidden />
                     <h1 className="text-2xl font-bold text-white">DNS Lookup</h1>

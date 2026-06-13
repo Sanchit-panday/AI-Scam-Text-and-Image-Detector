@@ -74,7 +74,7 @@ export default function layout({
                             <ThemeToggle />
                         </div> */}
                         {/* main content */}
-                        <main className='flex-1 py-6 '>
+                        <main className='flex-1'>
                             <CookieProvider>
                                 <ScanProvider>
                                     <div className='px-6 md:px-6 max-w-6xl w-full mx-auto'>

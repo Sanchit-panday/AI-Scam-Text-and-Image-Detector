@@ -114,7 +114,7 @@ export default function ScanHistory() {
     }
 
     return (
-        <div className="space-y-6 max-w-3xl">
+        <div className="space-y-6 mt-6 max-w-3xl">
             <div>
                 <div className="flex items-center gap-3 mb-1">
                     <History size={22} className="text-brand-400" aria-hidden />

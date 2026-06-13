@@ -1,6 +1,6 @@
 "use client";
 import { useScanStore } from "@/context/ScanContext";
-import { Plus, Send, Sparkles } from 'lucide-react'
+import { ChevronsUpDown, FlaskConical, Plus, Send, Sparkles } from 'lucide-react'
 import { caveat, saira } from "@/components/Fonts";
 import {
   Select,
@@ -25,9 +25,14 @@ export default function Home() {
   const router = useRouter();
   const { setPendingQuery } = useScanStore();
   const [uploadMenu, setUploadMenu] = useState<boolean>(false);
+  const [examplesPanel, setExamplesPanel] = useState<boolean>(false);
+  const [canSubmit, setCanSubmit] = useState<boolean>();
   const [promptAreaExpanded, setPromptAreaExpanded] = useState<boolean>(false);
 
   function handleInput(textarea: HTMLTextAreaElement) {
+    if (textarea.value.trim()) {
+      setCanSubmit(true);
+    }
     textarea.style.height = 'auto'
     const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
     const paddingTop = parseFloat(getComputedStyle(textarea).paddingTop) || 0;
@@ -41,6 +46,7 @@ export default function Home() {
       setPromptAreaExpanded(true);
     } else if (textarea.value.trim() === '') {
       setPromptAreaExpanded(false);
+      setCanSubmit(false);
     }
 
   }
@@ -100,12 +106,13 @@ export default function Home() {
     <>
       <div className="space-y-8 max-w-6xl overflow-hidden">
         {/* Hero */}
-        <div className="flex flex-col items-center pt-10 space-y-10 ">
+        <div className="flex flex-col items-center pt-15 h-screen">
           <div className="flex flex-col items-center text-center gap-y-4">
-            <h1 className="bg-linear-to-r from-white to-blue-400 bg-clip-text text-transparent text-5xl font-bold">Is it a scam? Let AI decide.</h1>
-            <p className="max-w-120 text-gray-200/50">Paste any message, link, or image and get an instant AI-powered scam analysis. Stay safe online.</p>
+            <h1 className="bg-linear-to-r from-white to-orange-600 bg-clip-text text-transparent text-5xl font-bold">Is it a scam? Let AI decide.</h1>
+            <p className="max-w-120 text-secondary">Paste any message, link, or image and get an instant AI-powered scam analysis. Stay safe online.</p>
           </div>
-          <div className="bg-[#2d2d2d] rounded-4xl p-2.5 w-full sm:w-xl md:min-w-xl">
+          {/* Prompt area */}
+          <div className="bg-card rounded-4xl p-2.5 mt-30 w-full sm:w-xl md:min-w-xl">
             <div className={`grid 
               ${promptAreaExpanded || mobileSize
                 ? "grid-cols-1 grid-rows-[auto_auto] gap-y-3 "
@@ -121,7 +128,7 @@ export default function Home() {
                   ref={textareaRef}
                   name="Enter text"
                   id="textInput"
-                  placeholder="Ask Anything"
+                  placeholder="Paste a message"
                   value={prompt}
                   onChange={(e) => {
                     setPrompt(e.target.value);
@@ -131,7 +138,7 @@ export default function Home() {
                   className="resize-none w-full min-h-[1em] border-none p-0 outline-none"
                 />
               </div>
-              <div className={`p-2.5 bg-gray-500/90 rounded-xl -translate-y-8 translate-x-2 flex ${uploadMenu ? "absolute" : "hidden"}`}>
+              <div className={`p-2.5 rounded-xl -translate-y-8 translate-x-2 flex ${uploadMenu ? "absolute" : "hidden"}`}>
                 <a href="/image-analysis"
                   className="text-sm"
                   onClick={handleUpload}
@@ -140,34 +147,48 @@ export default function Home() {
                 </a>
               </div>
               <button onClick={() => setUploadMenu(!uploadMenu)}
-                title="Add Images and more" className={`p-2 rounded-full hover:bg-slate-500 ${promptAreaExpanded || mobileSize ? "row-start-2 justify-self-start" : "order-1"}`}>
-                <Plus size={18} />
+                title="Add Images and more" className={`p-2 rounded-full hover:bg-card-hover ${promptAreaExpanded || mobileSize ? "row-start-2 justify-self-start" : "order-1"}`}>
+                <Plus size={22} />
               </button>
-              <div className={`flex gap-x-2 ${promptAreaExpanded || mobileSize ? "row-start-2 justify-self-end" : "order-3"}`}>
-                <Select value="mildyv1.3">
-                  <SelectTrigger className=" max-w-48">
-                    <SelectValue placeholder="Select a model" />
-                  </SelectTrigger>
-                  <SelectContent position="item-aligned">
-                    <SelectGroup>
-                      <SelectLabel>Select framework</SelectLabel>
-                      {frameworks.map((item) => (
-                        <SelectItem key={item.id} value={item.id}><Sparkles />{mobileSize ? "v" + item.version : item.label}</SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <button className="p-2 rounded-full hover:bg-slate-500" title="Send Prompt" onClick={() => handleSubmitPrompt()}><Send size={18} /></button>
+              <div className={`flex items-center justify-center h-full ${promptAreaExpanded || mobileSize ? "row-start-2 justify-self-end" : "order-3"}`}>
+                <div className="mr-2">
+                  <Select value="mildyv1.3">
+                    <SelectTrigger className=" max-w-48">
+                      <SelectValue placeholder="Select a model" />
+                    </SelectTrigger>
+                    <SelectContent position="item-aligned">
+                      <SelectGroup>
+                        <SelectLabel>Select framework</SelectLabel>
+                        {frameworks.map((item) => (
+                          <SelectItem key={item.id} value={item.id}><Sparkles />{mobileSize ? "v" + item.version : item.label}</SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {canSubmit &&
+                  <button className="p-2 rounded-full hover:bg-card-hover hover:text-accent transition-all" title="Send Prompt" onClick={() => handleSubmitPrompt()}>
+                    <Send size={22} />
+                  </button>
+                }
               </div>
             </div>
           </div>
-          <div className="hidden sm:flex flex-col items-center gap-y-8 max-w-3xl" >
-            <p className="text-muted-foreground">Try an example</p>
-            <div className="text-sm flex flex-wrap justify-center gap-x-3 gap-y-3" >
-              {chipData.map((item) => (
-                <button className="chip-button" key={item.id} onClick={(e) => fillExample(e)}>{item.label}</button>
-              ))}
-            </div>
+          <div className="hidden sm:flex flex-col mt-10 items-center gap-y-8 max-w-3xl" >
+            <button onClick={() => setExamplesPanel(!examplesPanel)}
+              className="text-muted-foreground hover:bg-card-hover border border-border p-2 px-4 rounded-full flex justify-center items-center gap-x-3 group">
+              <FlaskConical size={18} className={`${examplesPanel && "text-accent scale-110"} group-hover:text-accent group-hover:scale-110 transition-all`} />
+              <p className="flex items-center text-sm text-primary">
+                Try an example <ChevronsUpDown size={15} />
+              </p>
+            </button>
+            {examplesPanel &&
+              <div className="text-sm flex flex-wrap justify-center gap-x-3 gap-y-3" >
+                {chipData.map((item) => (
+                  <button className="chip-button" key={item.id} onClick={(e) => fillExample(e)}>{item.label}</button>
+                ))}
+              </div>
+            }
           </div>
         </div>
 
@@ -175,7 +196,7 @@ export default function Home() {
         <StatsAndQuickActions />
 
         {/* About scams in India */}
-        <div className="mb-15">
+        <div className="my-15">
           <div className={`mb-4 text-lg font-semibold text-slate-200 ${saira.className}`}>Made in India</div>
           <div className={`mb-10 text-5xl font-bold text-brand-400/90 ${caveat.className}`}>
             Cyber Threats Are Growing<br /><p className="text-red-500">Faster Than Ever</p>
